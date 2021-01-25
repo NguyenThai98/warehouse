@@ -1,0 +1,119 @@
+<div class="titleLogin">
+    <h3>Register</h3>
+</div>
+<div class="formRegister">
+    <form id="formRegister">
+        <div class="showErr"></div>
+        <div class="I_gmail">
+            <label for="full_name">Full Name</label> <br />
+            <input type="text" name="full_name" id="full_name" placeholder="Enter your full name"></input>
+        </div>
+        <div class="I_gmail">
+            <label for="username">Username</label> <br />
+            <input type="text" id="user_name" name="user_name" placeholder="Enter your username"></input>
+        </div>
+        {{#if rfid}}
+        <div class="I_gmail">
+            <label for="rfid">Rfid</label> <br />
+            <input type="text" id="rfid" name="rfid" value="{{rfid}}" disabled="disabled"
+                placeholder="Enter your rfid"></input>
+        </div>
+        {{else}}
+        <div class="I_gmail">
+            <label for="rfid">Rfid</label> <br />
+            <input type="text" id="rfid" name="rfid" placeholder="Enter your rfid"></input>
+        </div>
+        {{/if}}
+
+        <div class="I_password">
+            <label for="password">Password</label><br />
+            <input type="password" id="password" name="password" placeholder="Enter your password"></input>
+        </div>
+        <div class="I_password">
+            <label for="cf_password">Confirm Password</label><br />
+            <input type="password" id="cf_password" name="cf_password" placeholder="Confirm password"></input>
+        </div>
+        <div class="bottom_form">
+            <a href="javascript:void(0)" onclick="submitFormRegister()"> ĐĂNG KÝ </a>
+        </div>
+    </form>
+</div>
+
+{{#section 'js'}}
+<script type="text/javascript">
+    let showErr = document.querySelector('.showErr');
+    function submitFormRegister() {
+        let full_name = document.querySelector('#full_name').value;
+        let user_name = document.querySelector('#user_name').value;
+        let rfid = document.querySelector('#rfid').value;
+        let cf_password = document.querySelector('#cf_password').value;
+        let password = document.querySelector('#password').value;
+        let data = {
+            full_name: full_name,
+            user_name: user_name,
+            rfid: rfid,
+            password: password
+        }
+        if (validate(full_name, user_name, rfid, password, cf_password)) {
+            fetch("/user/register", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined) {
+                        socket.emit('REGISTER_ACCOUNT', ({
+                            full_name: `${full_name}`, msgRegister: `Vừa đăng ký tài khoản.`
+                        }));
+                        showErr.innerHTML = data.msgSuccess;
+                        showErr.style.display = "block";
+                        setTimeout(() => {
+                            showErr.style.display = "none";
+                            window.location.replace('/user/login');
+                        }, 2000)
+                    } else {
+                        showErr.innerHTML = data.msgErr;
+                        showErr.style.display = "block";
+                        setTimeout(() => {
+                            showErr.style.display = "none";
+                        }, 2000)
+                        user_name.value = "";
+                        password.value = "";
+                    }
+                })
+
+        }
+    }
+
+    function validate(full_name, user_name, rf_id, password, cf_password) {
+        if (full_name == "") {
+            alert("Please enter fullname.");
+            return false;
+        }
+        if (user_name == "") {
+            alert("Please enter username.");
+            return false;
+        }
+        if (rf_id == "") {
+            alert("Please enter rfid.");
+            return false;
+        }
+        if (password == "") {
+            alert("Please enter password.");
+            return false;
+        }
+        if (password.length < 6) {
+            alert("Please enter password must be at least 6 characters");
+            return false;
+        }
+        if (password != cf_password) {
+            alert("Confirm password incorret.");
+            return false;
+        }
+        return true;
+    }
+</script>
+{{/section}}

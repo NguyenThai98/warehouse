@@ -1,0 +1,15 @@
+{{#if device}}
+<form>
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input type="text" class="form-control" name="name_device" id="Name" value="{{this.device.name_device}}">
+    </div>
+    {{#if rfid}}
+        
+    {{/if}}
+    <div class="form-group">
+        <label for="Rfid">Rfid</label>
+        <input type="text" class="form-control" name="rfid" id="Rfid" value="{{this.device.rfid}}">
+    </div>
+</form>
+{{/if}}

@@ -1,0 +1,49 @@
+<div class="titleLogin">
+    <h3>LOGIN</h3>
+</div>
+<div class="formLogin">
+    <form id="formLogin">
+        <div class="showErr"></div>
+        {{#if successMsg}}
+        <div class="showErr">{{successMsg}}</div>
+        {{/if}}
+
+        <div class="I_password">
+            <label for="rfid">RFID</label><br />
+            <input type="text" id="rfid" name="rfid" placeholder="Enter your RFID"></input>
+        </div>
+        <div class="bottom_form">
+           <a href="javascript:void(0)" onclick="submitFormLogin()"> LOGIN</a>
+        </div>
+    </form>
+</div>
+
+{{#section 'js'}}
+<script type="text/javascript">
+    let all_rfid = document.querySelectorAll('.rfid_item');
+    let aRfid = Array.from(all_rfid);
+    let rfid = [];
+    for (let i = 0; i < aRfid.length; i++) {
+        rfid.push(aRfid[i].value);
+    }
+    let data = {
+        rfid: rfid
+    }
+    fetch("/user/loginR", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    }).then(response => response.json())
+        .then(data => {
+            if (data) {
+                window.location.replace('/user/info');
+                localStorage.setItem('data_device', JSON.stringify(data));
+            }
+        })
+
+</script>
+
+
+{{/section}}

@@ -1,0 +1,229 @@
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="
+    padding: 0;
+">
+                <div class="titleAccept">
+                    <h3>Duyệt Đăng Ký Mới Dụng Cụ</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel-body col-md-12">
+                <table class="table table-hover">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">Tên dụng cụ</th>
+                            <th scope="col">RFID</th>
+                            <th scope="col">Xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        {{#each Requests_Register_device}}
+                        <tr>
+                            <td>{{name_device}}</td>
+                            <td>{{rfid}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-info"
+                                    onclick="accept('{{rfid}}','device')">Đồng
+                                    ý</button>
+                                <button type="button" class="btn btn-outline-warning"
+                                    onclick="reject('{{rfid}}','device')">Từ
+                                    chối</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="
+    padding: 0;
+">
+                <div class="titleAccept">
+                    <h3>Duyệt Đăng Ký Lấy Dụng Cụ</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel-body col-md-12">
+                <table class="table table-hover">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">NGƯỜI ĐĂNG KÝ</th>
+                            <th scope="col">TÊN DỤNG CỤ</th>
+                            <th scope="col">RFID</th>
+                            <th scope="col">NGÀY ĐĂNG KÝ</th>
+                            <th scope="col">XỬ LÝ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        {{#each Requests_Order_device}}
+                        <tr>
+                            <td>{{full_name}}</td>
+                            <td>{{name_device}}</td>
+                            <td>{{rfid}}</td>
+                            <td>{{date_rent}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-info"
+                                    onclick="acceptOrder('{{id_device}}',{{id_account}})">Đồng
+                                    ý</button>
+                                <button type="button" class="btn btn-outline-warning"
+                                    onclick="rejectOrderDevice('{{id_device}}',{{id_account}})">Từ
+                                    chối</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="
+    padding: 0;
+">
+                <div class="titleAccept">
+                    <h3>Duyệt yêu cầu tài khoản</h3>
+                </div>
+            </div>
+        </div>
+
+        {{!-- <div class="row">
+            <div class="col-md-12">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">
+                            << </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"> >> </a>
+                    </li>
+                </ul>
+            </div>
+        </div> --}}
+
+        <div class="row">
+            <div class="panel-body col-md-12">
+                <table class="table table-hover">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th scope="col">Tên tài khoản</th>
+                            <th scope="col">RFID</th>
+                            <th scope="col">Xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        {{#each Requests_Register_account}}
+                        <tr>
+                            <td>{{full_name}}</td>
+                            <td>{{rfid}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-info"
+                                    onclick="accept('{{rfid}}','account')">Đồng
+                                    ý</button>
+                                <button type="button" class="btn btn-outline-warning"
+                                    onclick="reject('{{rfid}}','account')">Từ
+                                    chối</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{#section 'title'}}
+    Duyệt Dụng cụ
+{{/section}}
+{{#section 'js'}}
+<script>
+
+
+
+    function accept(rfid, table) {
+        let data = {
+            rfid: rfid,
+            table: table,
+        }
+        fetch("/admin/acceptAccount_Device", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.msgErr == undefined) {
+                    alert(data.msgSuccess);
+                    window.location.reload();
+                } else {
+                    alert(data.msgErr);
+                }
+            })
+
+    }
+    function acceptOrder(id_device, id_account) {
+        let data = {
+            id_device: id_device,
+            id_account: id_account
+        }
+        fetch("/admin/acceptOrder", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json()
+            )
+         window.location.reload(false);
+
+    }
+    function reject(rfid, table) {
+        let data = {
+            rfid: rfid,
+            table: table,
+        }
+        fetch("/admin/rejectAccount_Device", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.msgErr == undefined) {
+                    alert(data.msgSuccess);
+                    window.location.reload();
+                } else {
+                    alert(data.msgErr);
+                }
+            })
+    }
+     function rejectOrderDevice(id_device, id_account) {
+        let data = {
+            id_device: id_device,
+            id_account: id_account
+        }
+        fetch("/admin/rejectOrder", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json()
+            )
+         window.location.reload();
+    }
+</script>
+{{/section}}

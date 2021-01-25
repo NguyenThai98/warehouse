@@ -1,0 +1,64 @@
+<div class="formLogin_rfid">
+    {{#if allRFID}}
+    {{#each allRFID}}
+    <input type="hidden" class="rfid_item" name="rfid" value="{{value}}"></input>
+    {{/each}}
+    {{/if}}
+</div>
+
+{{#section 'js'}}
+<script type="text/javascript">
+    let all_rfid = document.querySelectorAll('.rfid_item');
+    let aRfid = Array.from(all_rfid);
+    let rfid = [];
+    for (let i = 0; i < aRfid.length; i++) {
+        rfid.push(aRfid[i].value);
+    }
+    let data = {
+        rfid: rfid
+    }
+    fetch("/user/loginR", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    }).then(response => response.json())
+        .then(data => {
+            if (data) {
+                window.location.replace('/user/info');
+                localStorage.setItem('data_device', JSON.stringify(data));
+            }
+        })
+
+</script>
+{{/section}}
+<style>
+    .formLogin_rfid {
+        position: absolute;
+        background: #1b262c;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .formLogin_rfid::before {
+        content: "ĐANG TẢI...";
+        color: #bbe1fa;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+</style>
+{{#section 'css'}}
+
+{{/section}}

@@ -1,0 +1,343 @@
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="menu_borrow">
+                <ul class="menu_borrow">
+                    {{#if selectMenus}}
+                    {{#each selectMenus}}
+                    <li class="nav_borrow" id="Menu_{{id_menu}}">
+                        <a href="javascript:void(0)"
+                            onclick="getChildMenu({{id_menu}},this,'product')">{{name_menu}}</a>
+                    </li>
+                    {{/each}}
+                    {{/if}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" id="openModel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title text-uppercase text-center" id="exampleModalLabel">Chi tiết sản phẩm</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <span class="badge badge-secondary mb-2">Tên sản phẩm</span> <span class="name_device"></span>
+                        <br>
+                        <span class="badge badge-secondary vitritu  mb-2"></span> <span class="idtu"></span> <br>
+                        <span class="badge badge-secondary  mb-2 nameAuthAlreadyBorrow"> </span> <br>
+                    </div>
+                    <div class="col-6">
+                        <img width="100%" height="100px" src="" class="image" alt="image device"
+                            style="object-fit: cover;">
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="layout-cabinet" width="100px" height="100px"></div>
+                    </div>
+                </div>
+                <label for="dayOrder" style="
+    background: var(--mau4);
+    color: var(--mau1);
+    padding: 2px;
+">Ngày Đăng Ký:</label>
+                <input class="dayOrder" style="
+    padding: 2px 0;
+    border: 2px solid var(--mau4);
+    margin-top: 10px;
+    outline: none;
+" type="date" id="dayOrder" name="dayOrder">
+                <button type="submit" class="btn btn-dark btn-borrow"
+                    style="width: 100%;margin: 15px 0;text-transform: uppercase;" onclick="handleOrderDevice()">Đăng ký lấy từ xa</button>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary closeModel" data-dismiss="modal">Thoát</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" class="rfid_hide">
+
+{{#section 'js'}}
+<script>
+    let closeModel = document.querySelector('.closeModel');
+    var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("dayOrder")[0].setAttribute('min', today);
+ 
+    function handleOrderDevice() {
+        let rfid = document.querySelector('.rfid_hide').value;
+        let name_device = document.querySelector('span.name_device').textContent;
+        let full_name_header = document.querySelector('.full_name_header').textContent;
+        let dateOrder = document.querySelector('.dayOrder').value;
+        function toTimestamp(dateOrder){
+        var datum = Date.parse(dateOrder);
+        return datum/1000;
+        }
+        let dateRegister = toTimestamp(dateOrder);
+        if(isNaN(dateRegister)){
+            alert("Bạn phải chọn ngày đăng ký")
+            return false;
+        }
+        let data = {
+            rfid,
+            date_rent: dateRegister*1000,
+            note_report: "Đăng Ký Lấy Dụng Cụ"
+        }
+        fetch("/device/OrderDevice", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+            .then(data => {
+                if (data.msgErr == undefined) {
+                    socket.emit('CLIENT_ORDER_DEVICE', ({ full_name: `${full_name_header}`, name_device: `${name_device}` }));
+                    closeModel.click();
+                }
+            }).catch(error => console.log(error.message))
+    }
+    function showPosition(id_shelf, name_shelf, pos_x, pos_y) {
+        let position_device = `${pos_x}-${pos_y}`;
+        let addActive = document.querySelector('.addActive');
+        let cabinet = $(".layout-cabinet");
+        if (id_shelf) {
+            let data = {
+                id_shelf: id_shelf
+            }
+            fetch("/device/getShefl", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ImgShelf != null) {
+                        $('.layout-cabinet').css('background-image', 'url("/public/img/' + data.ImgShelf + '")');
+                    }
+                })
+            $(".slot").remove();
+            fetch("/device/showPosition", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    for (let j = 1; j <= 12; j++) {
+                        for (let i = 1; i <= 19; i++) {
+                            cabinet.append("<div class ='slot' style='border:#ffffff 1px solid;' id = '" + j + "-" + i + "' style = 'grid-row : " + j + "; grid-column : " + i + "'></div>");
+                        }
+                    }
+                    let aSlot = document.querySelectorAll('.slot');
+                    for (let i = 0; i < aSlot.length; i++) {
+                        if (position_device == aSlot[i].id) {
+                            aSlot[i].style.backgroundColor = '#d0f111';
+                            aSlot[i].style.pointerEvents = "none";
+                        }
+                    }
+                })
+        }
+
+    }
+
+    //quoc xxx
+    function removeVietnameseTones(str) {
+        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+        str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+        str = str.replace(/đ/g, "d");
+        str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+        str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+        str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+        str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+        str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+        str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+        str = str.replace(/Đ/g, "D");
+        // Some system encode vietnamese combining accent as individual utf-8 characters
+        // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
+        str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
+        // Remove extra spaces
+        // Bỏ các khoảng trắng liền nhau
+        str = str.replace(/ + /g, " ");
+        str = str.trim();
+        // Remove punctuations
+        // Bỏ dấu câu, kí tự đặc biệt
+        str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
+        return str;
+    }
+    function showDevice(id_device, el) {
+        let name_device = document.querySelector('span.name_device');
+        let rfid = document.querySelector('.rfid_hide')
+    
+        let image = document.querySelector('img.image');
+        let nameAuthAlreadyBorrow = document.querySelector('span.nameAuthAlreadyBorrow');
+        let btn_borrow = document.querySelector('.btn-borrow');
+        let vitritu = document.querySelector('.vitritu');
+        let idtu = document.querySelector('.idtu');
+        let data = {
+            id: id_device
+        }
+        fetch("/device/get-device", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+            .then(data => {
+                console.log(data);
+                rfid.value = data.rfid;
+                let modal = document.querySelector('.modal.fade');
+                name_device.innerHTML = data.name_device;
+                image.setAttribute('src', `/public/img/${data.image}`);
+                if (data.status == 0) {
+                    vitritu.innerHTML = "Ngăn Tủ";
+                    idtu.innerHTML = data.name_shelf;
+                }
+                if (data.status == 1) {
+                    nameAuthAlreadyBorrow.innerHTML = data.full_name + ": Đã mượn.";
+                    btn_borrow.style.display = 'none';
+                    nameAuthAlreadyBorrow.style.display = 'inline-block';
+                     vitritu.innerHTML = "Ngăn Tủ";
+                     idtu.innerHTML = data.name_shelf;
+                } else if(data.isApprove == 0){
+                    nameAuthAlreadyBorrow.innerHTML = "Bạn đã đăng ký";
+                    btn_borrow.style.display = 'none';
+                    nameAuthAlreadyBorrow.style.display = 'inline-block';
+                     vitritu.innerHTML = "Ngăn Tủ";
+                    idtu.innerHTML = data.name_shelf;
+                }
+                else {
+                    nameAuthAlreadyBorrow.style.display = 'none';
+                    btn_borrow.style.display = 'block';
+                }
+                showPosition(data.id_shelf || "", data.name_shelf, data.pos_x, data.pos_y);
+
+
+            }).catch(err => console.log(err.message));
+
+    }
+    function getChildMenu_1(id_product, classEl, table) {
+        let el = document.querySelector(classEl);
+        let data = {
+            id: id_product,
+            table: table,
+        }
+        fetch("/menu/Submenu", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    let ul = document.createElement('ul');
+                    for (let i = 0; i < data.length; i++) {
+                        let li = document.createElement('li');
+
+                        li.classList.add(`subChildMenu_${i}`);
+                        li.setAttribute("data-target", `#openModel`);
+                        li.setAttribute("data-toggle", "modal");
+                        li.setAttribute('id_device', data[i].id_device);
+                        let id_device = li.getAttribute('id_device');
+                        li.setAttribute('onclick', `showDevice(${id_device}, this)`);
+                        let textLi = document.createTextNode(data[i].name_device);
+                        li.appendChild(textLi);
+                        ul.appendChild(li);
+                    }
+                    ul.classList.add('subChildMenu');
+                    let subMenu = document.querySelector('ul.subChildMenu');
+                    if (subMenu) {
+                        subMenu.remove();
+                        el.parentElement.appendChild(ul);
+                    } else {
+                        el.parentElement.appendChild(ul);
+                    }
+                    let active_Categories = document.querySelector('.active_Categories');
+                    if (active_Categories) {
+                        active_Categories.classList.remove("active_Categories");
+                        el.classList.add("active_Categories");
+                    } else {
+                        el.classList.add("active_Categories");
+                    }
+                } else {
+                    alert('Không có sản phẩm');
+                }
+            })
+
+    }
+    function getChildMenu(id_category, el, table) {
+        let data = {
+            id: id_category,
+            table: table,
+        }
+        fetch("/menu/Submenu", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    let ul = document.createElement('ul');
+                    for (let i = 0; i < data.length; i++) {
+                        let li = document.createElement('li');
+
+                        li.classList.add(`subMenu_${i}`);
+
+                        li.setAttribute('id_product', data[i].id_product);
+                        let id_product = li.getAttribute('id_product');
+                        li.setAttribute('onclick', `getChildMenu_1(${id_product},'li.subMenu_${i}','device')`);
+                        let textLi = document.createTextNode(data[i].name_product);
+                        li.appendChild(textLi);
+                        ul.appendChild(li);
+                    }
+                    ul.classList.add('subMenu');
+                    let subMenu = document.querySelector('ul.subMenu');
+                    if (subMenu) {
+                        subMenu.remove();
+                        el.parentElement.appendChild(ul);
+                    } else {
+                        el.parentElement.appendChild(ul);
+                    }
+                    let active_Categories_parent = document.querySelector('.active_Categories_parent');
+                    if (active_Categories_parent) {
+                        active_Categories_parent.classList.remove("active_Categories_parent");
+                        el.parentElement.classList.add("active_Categories_parent");
+                    } else {
+                        el.parentElement.classList.add("active_Categories_parent");
+                    }
+                } else {
+                    alert('Không có sản phẩm');
+                }
+            })
+
+    }
+</script>
+{{/section}}
+
+{{#section 'title'}}
+Đăng ký Dụng cụ
+{{/section}}

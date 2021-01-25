@@ -1,0 +1,379 @@
+<div class="titleLogin">
+    <h3>Quản lý toàn khoản</h3>
+</div>
+<div class="table_auth">
+    <div class="table_auth_content">
+        <div class="container">
+            <div class="row">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Họ và tên</th>
+                            <th scope="col">Tên tài khoản</th>
+                            <th scope="col">Mã RFID</th>
+                            <th scope="col">Thanh tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each all_accounts}}
+                        <tr>
+                            <td>{{full_name}}</td>
+                            <td>{{user_name}}</td>
+                            <td> <input type="password" class="form-control" value="{{rfid}}" disabled="disabled"></td>
+                            <td>
+                                <button type="button" data-toggle="modal" data-target="#modelEdit" class="btn btn-dark"
+                                    onclick="EditUser('{{rfid}}')">Chỉnh sửa</button>
+                                <button type="button" class="btn btn-info" onclick="authUser('{{id_account}}')"
+                                    data-toggle="modal" data-target="#modelAuth">Phân quyền</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modelEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title text-uppercase text-center" id="exampleModalLongTitle">Chỉnh sửa tài khoản</h5>
+            </div>
+            <div class="showErr"></div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group modelEdit">
+                        <label for="account_name">Tên tài khoản</label>
+                        <input type="text" class="form-control" id="account_name" disabled="disabled">
+                    </div>
+                    <div class="form-group modelEdit">
+                        <label for="rfid">RFID</label>
+                        <input type="password" class="form-control" id="rfid" disabled="disabled"
+                            placeholder="Nhập RFID...">
+                    </div>
+                    <div class="form-group modelEdit">
+                        <label for="password">Mật khẩu mới</label>
+                        <input type="text" class="form-control" id="password" placeholder="Nhập mật khẩu mới...">
+                    </div>
+                    <div class="form-group text-center modelEdit">
+                        <button type="button" class="btn btn-info" onclick="fChangePw()">Lưu thay đổi</button>
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modelAuth" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content ">
+            <div class="modal-header  ">
+                <h5 class="modal-title text-uppercase text-center" id="exampleModalLongTitle">Quyền của tài khoản hiện
+                    tại</h5>
+                <div class="showErrr"></div>
+
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="1" id="MUON_TRA">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="MUON_TRA">Mượn, Trả (1)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="2" id="LAY_DUNG_CU">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="LAY_DUNG_CU">Lấy dụng cụ (2)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="3" id="DUYET_DUNG_CU">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="DUYET_DUNG_CU">Duyệt yêu cầu (3)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="4" id="THEM_DUNG_CU">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="THEM_DUNG_CU">Đăng ký dụng cụ, import list (4)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="5" id="XUAT_FILE_KIEM_KE">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="XUAT_FILE_KIEM_KE">Xuất file dữ liệu kiểm kê (5)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="6" id="DANG_KY_TU_XA">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="DANG_KY_TU_XA">Đăng ký từ xa (6)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="7" id="CAP_NHAT_CL_DUNG_CU">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="CAP_NHAT_CL_DUNG_CU">Cập nhật chất lượng dụng cụ (7)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="8" id="PHAN_QUYEN_CAP_NHAT_MK">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="PHAN_QUYEN_CAP_NHAT_MK">Phần quyền, cập nhật mật khẩu (8)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text authCheck">
+                                <input type="checkbox" value="9" id="TAO_TAI_KHOAN">
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <label for="TAO_TAI_KHOAN">Tạo tài khoản (9)</label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="button" class="btn btn-dark" onclick="fChangeAuth()">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delAccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-uppercase text-center" id="exampleModalLabel">Xóa tài khoản</h5>
+            </div>
+            <div class="modal-body">
+                <h5>Bạn có chắc chắn xóa tài khoản này ?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section 'js'}}
+<script>
+    let id_acc = -1;
+    function fChangeAuth() {
+        let showErr = document.querySelector('.showErrr');
+        let authUsers = [];
+        let allCheckAuths = document.querySelectorAll('.authCheck > input[type=checkbox]');
+        allCheckAuths = Array.from(allCheckAuths);
+        for (let i = 0; i < allCheckAuths.length; i++) {
+            if (allCheckAuths[i].checked == true) {
+                authUsers.push(allCheckAuths[i].defaultValue);
+            }
+        }
+        if (authUsers.length > 0) {
+            const data = {
+                id_account: id_acc,
+                auth: authUsers
+
+            }
+            fetch("/user/updateAuthUser", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined) {
+                        showErr.innerHTML = data.msgSuccess;
+                        showErr.style.display = "block";
+                        setTimeout(() => {
+                            let pathname = window.location.pathname;
+                            window.location.replace(pathname);
+                        }, 1000);
+                    } else {
+                        showErr.innerHTML = data.msgErr;
+                        showErr.style.display = "block";
+                    }
+
+                })
+        } else {
+            showErr.innerHTML = "Bạn chưa chọn quyền.";
+            showErr.style.display = "block";
+            setTimeout(() => {
+                showErr.style.display = "none";
+            }, 2000);
+        }
+
+    }
+    function authUser(id_account) {
+        let authUsers = [];
+        let allCheckAuths = document.querySelectorAll('.authCheck > input[type=checkbox]');
+        allCheckAuths = Array.from(allCheckAuths);
+        for (let i = 0; i < allCheckAuths.length; i++) {
+            allCheckAuths[i].checked = false;
+            authUsers.push(allCheckAuths[i].defaultValue);
+        }
+        id_acc = id_account;
+        if (id_account) {
+            const data = {
+                id_account: id_account
+            }
+            fetch("/user/getRoleUser", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        for (let i = 0; i < data.length; i++) {
+                            if (authUsers.includes(data[i] + "")) {
+                                allCheckAuths[data[i] - 1].checked = true;
+                            }
+                        }
+                    }
+
+                })
+        }
+    }
+    function fChangePw() {
+        let showErr = document.querySelector('.showErr');
+        let rfid__ = document.querySelector('#rfid').value;
+        let password = document.querySelector('#password').value;
+        if (rfid__) {
+            const data = {
+                rfid: rfid__,
+                password
+            }
+            fetch("/user/changePwAccount", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined) {
+                        showErr.innerHTML = data.msgSuccess;
+                        showErr.style.display = "block";
+                        setTimeout(() => {
+                            let pathname = window.location.pathname;
+                            window.location.replace(pathname);
+                        }, 1000);
+                    } else {
+                        showErr.innerHTML = data.msgErr;
+                        showErr.style.display = "block";
+                    }
+                })
+        }
+
+    }
+    function EditUser(rfid) {
+        let account_name = document.querySelector('#account_name');
+        let rfid__ = document.querySelector('#rfid');
+        if (rfid) {
+            const data = {
+                rfid: rfid
+            }
+            fetch("/user/getAccount", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined) {
+                        account_name.value = data.full_name;
+                        rfid__.value = data.rfid;
+                    } else {
+                        console.log(data.msgErr);
+                    }
+
+                })
+        }
+    }
+</script>
+{{/section}}
+
+{{#section 'title'}}
+Phân Quyền
+{{/section}}

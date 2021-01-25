@@ -1,0 +1,249 @@
+<div class="container_ntt">
+    <ul class="menu_system" style="
+    text-align: center;
+">
+        <span class="btn_system plc"></span>
+        <li class="plc">Tình trạng PLC</li>
+        <span class="btn_system reader"></span>
+        <li class="reader">Tình trạng Reader</li>
+    </ul>
+    <ul class="menu_key">
+        
+        <li class="key key0" on="0"><span on="0" class="btn_system key key0"></span>Tình trạng Khóa 01</li>
+          
+        <li class="key key1" on="1"><span on="1" class="btn_system key key1"></span>Tình trạng Khóa 02</li>
+          
+        <li class="key key2" on="2"><span on="2" class="btn_system key key2"></span>Tình trạng Khóa 03</li>
+         
+        <li class="key key3" on="3"> <span on="3" class="btn_system key key3"></span>Tình trạng Khóa 04</li>
+          
+        <li class="key key4" on="4"><span on="4" class="btn_system key key4"></span>Tình trạng Khóa 05</li>
+    </ul>
+    <ul class="menu_switch">
+       
+        <li class="switch switch0" on="0"> <span on="0" class="btn_system switch switch0"></span>Tình trạng Công tắc hành trình 01</li>
+        
+        <li class="switch switch1" on="1"><span on="1" class="btn_system switch switch1"></span>Tình trạng Công tắc hành trình 02</li>
+      
+        <li class="switch switch2"  on="2">  <span  on="2" class="btn_system switch switch2"></span>Tình trạng Công tắc hành trình 03</li>
+       
+        <li class="switch switch3"  on="3"> <span  on="3" class="btn_system switch switch3"></span>Tình trạng Công tắc hành trình 04</li>
+        
+        <li class="switch switch4"  on="4"><span  on="4" class="btn_system switch switch4"></span>Tình trạng Công tắc hành trình 05</li>
+    </ul>
+</div>
+{{#section 'title'}}
+System
+{{/section}}
+
+
+{{#section 'css'}}
+<style>
+    .container_ntt {
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 100px;
+    }
+    .container_ntt > .menu_system{
+        width: 40%;
+    }
+    .menu_key li > span,.menu_switch li > span{
+        margin-right:5px;
+    }
+    .menu_key li, .menu_switch li{
+        font-size:16px;
+        font-weight:bold;
+        color: red;
+        text-transform: uppercase;
+    }
+    .container_ntt > .menu_switch, .container_ntt > .menu_key{
+        text-align: center;
+        width: 30%;
+    }
+    .menu_system>li {
+        font-size: 18px;
+        font-weight: bold;
+        color: red;
+        display: inline-block;
+        vertical-align: middle;
+        text-transform: uppercase;
+    }
+
+    .menu_system>li:not(:last-child),
+    .default {
+        margin-right: 10px;
+
+    }
+
+    .btn_system {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: red;
+        display: inline-block;
+        vertical-align: middle;
+
+    }
+
+    @keyframes animation_active {
+        0% {
+            background-color: #006400
+        }
+
+        25% {
+            background-color: #008B00
+        }
+
+        50% {
+            background-color: #00CD00
+        }
+
+        75% {
+            background-color: #00EE00
+        }
+
+        100% {
+            background-color: #00FF00
+        }
+    }
+
+    @keyframes animation_died_dot {
+        100% {
+            background-color: red
+        }
+    }
+
+    @keyframes animation_died_plc {
+        100% {
+            color: red
+        }
+    }
+
+    @keyframes animation_color {
+        0% {
+            color: #006400
+        }
+
+        25% {
+            color: #008B00
+        }
+
+        50% {
+            color: #00CD00
+        }
+
+        75% {
+            color: #00EE00
+        }
+
+        100% {
+            color: #00FF00
+        }
+    }
+
+    .btn_system.switch {
+        background: red;
+    }
+
+    .btn_system.switch~li {
+        color: red;
+    }
+
+    .note_system {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -30%);
+    }
+</style>
+{{/section}}
+
+
+{{#section 'js'}}
+<script>
+    let temp = 0;
+    let K = null;
+    let P = null;
+    let C = null;
+    let data_system = null;
+    let data_reader = null;
+    socket.on('RECIVE_DATA_SYSTEM', (data) => {
+        data_system = JSON.parse(data);
+        if (data) {
+            if (data_system["P"]) {
+                P = data_system["P"];
+                if (P == 1) {
+                    $(".plc").css('animation', "animation_color .3s linear infinite");
+                    $(".btn_system.plc").css('animation', "animation_active .3s linear infinite");
+                }
+            }
+        } else if (data == null) {
+            $(".plc").css('animation', "none");
+            $(".btn_system.plc").css('animation', "none");
+        }
+         if (data_system != undefined) {
+        if (data_system["K"]) {
+           
+             let allKey = document.querySelectorAll("li.key");
+             for (let i = 0; i < allKey.length; i++){
+                let on = allKey[i].getAttribute("on");
+                if (data_system["K"][on] == 1) {
+                    $(`.key.key${+on}`).css('animation', "animation_color .3s linear infinite");
+                } else {
+                    $(`.key.key${+on}`).css('animation', "none");
+                }
+            }
+             let allDot_key = document.querySelectorAll(".btn_system.key");
+            for (let i = 0; i < allDot_key.length; i++){
+                let on = allDot_key[i].getAttribute("on");
+                if (data_system["K"][on] == 1) {
+                    $(`span.btn_system.key.key${+on}`).css('animation', "animation_active .3s linear infinite");
+                } else {
+                    $(`span.btn_system.key.key${+on}`).css('animation', "none");
+                }
+            }
+            
+        }
+        if (data_system["C"]) {
+             let allSwitch = document.querySelectorAll("li.switch");
+             for (let i = 0; i < allSwitch.length; i++){
+                let on = allSwitch[i].getAttribute("on");
+                if (data_system["C"][+on] == 1) {
+                      $(`.switch.switch${+on}`).css('animation', "animation_color .3s linear infinite");
+                } else {
+                      $(`.switch.switch${+on}`).css('animation', "none");
+                }
+            }
+             let allDot_switch = document.querySelectorAll(".btn_system.switch");
+            for (let i = 0; i < allDot_switch.length; i++){
+                let on = allDot_switch[i].getAttribute("on");
+                if (data_system["C"][on] == 1) {
+                     $(`.btn_system.switch.switch${+on}`).css('animation', "animation_active .3s linear infinite");
+                } else {
+                    $(`.btn_system.switch.switch${+on}`).css('animation', "none");
+                }
+            }
+        }
+    }
+    });
+    socket.on('RECIVE_READER_SYSTEM', (data) => {
+        if (data) {
+            data_reader = data.split(":");
+            if (data_reader[1] == "1") {
+                $(".reader").css('animation', "animation_color .3s linear infinite");
+                $(".btn_system.reader").css('animation', "animation_active .3s linear infinite");
+            } else {
+                $(".reader").css('animation', "none");
+                $(".btn_system.reader").css('animation', "none");
+            }
+        } else if (data == null) {
+            data_reader = data;
+            $(".reader").css('animation', "none");
+            $(".btn_system.reader").css('animation', "none");
+        }
+    })
+
+   
+</script>
+{{/section}}

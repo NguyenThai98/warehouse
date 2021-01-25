@@ -1,0 +1,149 @@
+<div class="titleLogin">
+    <h3>ĐĂNG KÝ DỤNG CỤ</h3>
+</div>
+
+<div class="container">
+   
+    <div class="row">
+        <div class="panel-body col-md-12">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+
+                        <th scope="col">Họ và tên</th>
+                        <th scope="col">Mã RFID</th>
+                        <th scope="col">Thao tác</th>
+                        <th scope="col">Tên dụng cụ</th>
+                        <th scope="col">Tủ</th>
+                        <th scope="col">Ngày</th>
+                        <th scope="col">Duyệt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each historyOrder}}
+                    <tr>
+
+                        <td>{{full_name}}</td>
+                        <td>{{rfid}}</td>
+                        <td>{{name_report_status}}</td>
+                        <td>{{name_device}}</td>
+                        <td>
+                            {{name_shelf}}
+                        </td>
+                        <td>
+                            {{date_rent}}
+                        </td>
+                        {{#if (eq isApprove 0) }}
+                        <td style="color: rgb(0, 17, 255); font-size: 18px">
+                            Chờ Duyệt
+                        </td>
+                        {{else if (eq isApprove 1) }}
+                        <td style="color: rgba(44, 216, 44, 0.582);font-size: 18px" id="duyet">
+
+                            <button id="btn-getDevice" onmouseover="showButton('{{date_rentTimeStamp}}')"
+                                onclick="socketTakenDevice('{{rfidDevice}}','{{full_name}}','{{name_device}}','{{name_shelf}}')">Lấy</button>
+
+                        </td>
+                        {{else if (eq isApprove 2) }}
+                        <td style="color: var(--mau4);font-weight: bold;font-size: 18px">
+                            Từ Chối
+                        </td>
+                        {{/if}}
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panigation ">
+                <a href="?page={{prev}}" {{#if can_go_prev}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-left " aria-hidden="true" style="
+                        font-size:20px"></i></a>
+                {{#each pages_item}}
+                {{#if isActive}}
+                <a href="?page={{value}}" class="pages active" style="    background-color: #2fb4c1;
+    font-size: 20px;
+    border-radius: 50%;
+    text-align: center;
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    margin:0 5px">
+                    {{value}} </a>
+                {{else}}
+                <a href="?page={{value}}" class="pages" style="
+                        font-size:20px ;margin:0 5px"> {{value}} </a>
+                {{/if}}
+
+                {{/each}}
+                <a href="?page={{next}}" {{#if can_go_next}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-right" aria-hidden="true" style="
+                        font-size:20px"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{{#section 'js' }}
+<script>
+    function showButton(input) {
+        var today = new Date().getTime();
+        if (input > today) {
+            document.getElementById("btn-getDevice").disabled = true;
+        }
+        else {
+            document.getElementById("btn-getDevice").disabled = false;
+        }
+    }
+    let rfid = null;
+    let fullName = null;
+    let nameDevice = null;
+    function socketTakenDevice(rfidDevice, full_name, name_device,name_shelf) {
+        let idtu = name_shelf.split(" ")[2];
+        let data = {
+            id_shelf: idtu,
+            rfid: rfidDevice
+        }
+        rfid = rfidDevice;
+        fullName = full_name;
+        nameDevice = name_device;
+        socket.emit("REGISTER_DEVICE", data);
+        alert("Tủ đã mở");
+    }
+    socket.on('CHECK_OPEN_SHELF_REGISTER', (data) => {
+
+        if(data == "true") {
+            handleTakenDevice();
+        }else{
+            alert('Lấy dụng cụ thất bại.');
+        }
+    })
+    function handleTakenDevice(rfidDevice, full_name, name_device) {
+        let dateToday = new Date().getTime();
+        let data = {
+            rfid: rfidDevice,
+            date_rent: dateToday,
+            note_report: "Lay dung cu"
+        }
+        console.log(data)
+        fetch("/device/GetDevice", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+            .then(data => {
+                if (data.msgErr == undefined) {
+                    socket.emit('CLIENT_TAKEN_DEVICE', ({ full_name: `${full_name}`, name_device: `${name_device}` }));
+                    window.location.reload(false)
+                }
+            }).catch(error => console.log(error.message))
+    }
+    function exportBorrow() {
+        document.location = "/report/exportsOrder";
+    }
+</script>
+{{/section}}

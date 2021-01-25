@@ -1,0 +1,36 @@
+<main class="home">
+    <div>
+        <div class="row_ntt home_actions">
+            {{#if MUON_TRA}}
+            <div class="col-3_ntt">
+                <div class="btn_ntt btn_borrow">
+                    <a href="/device/borrowDevice">Mượn</a>
+                </div>
+            </div>
+            <div class="col-3_ntt">
+                <div class="btn_ntt btn_return">
+                    <a href="/device/returnDevice">Trả</a>
+                </div>
+            </div>
+            {{/if}}
+            {{#if LAY_DUNG_CU}}
+            <div class="col-3_ntt">
+                <div class="btn_ntt btn_taken">
+                    <a href="/device/TakenDevice">Lấy</a>
+                </div>
+            </div>
+            {{/if}}
+            {{#if DANG_KY_TU_XA}}
+            <div class="col-3_ntt">
+                <div class="btn_ntt btn_register">
+                    <a href="/device/registerGetDevice">Đăng Ký từ xa</a>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</main>
+
+{{#section 'title'}}
+Trang chủ
+{{/section}}

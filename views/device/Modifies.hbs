@@ -1,0 +1,304 @@
+<div class="modal-content">
+    <div class="titleLogin">
+        <h3>HIỆU CHỈNH</h3>
+    </div>
+    <div class="modal-body">
+        <div class="formRegister">
+            <div class="showErrr"></div>
+            <form id="formRegister">
+                <div class="showErr_01"></div>
+                <div class="I_gmail">
+                    <label for="name_shelf">Ngăn tủ</label> <br />
+                    <select name="name_shelf" onchange="changeShelf()" id="name_shelf">
+                    </select>
+                </div>
+                <div class="I_gmail">
+                    <label for="name_category">Danh mục</label> <br />
+                    <select name="name_category" onchange="changeCategory()" id="name_category">
+                    </select>
+                </div>
+
+                <div class="I_password">
+                    <label for="name_product">Loại dụng cụ</label><br />
+                    <select name="name_product" id="name_product" onchange="changeProduct()">
+                    </select>
+                </div>
+                <div class="I_password">
+                    <label for="name_device">Dụng cụ</label><br />
+                    <select name="name_device" id="name_device" onchange="changeDevice()">
+                    </select>
+                </div>
+                <div class="I_password">
+                    <label for="name_device">Thông số</label><br />
+                    <input type="text" id="note_device">
+                </div>
+                <div class="I_gmail">
+                    <label for="image_device" style="
+    cursor: pointer;
+">Thêm hình ảnh<i class="fa fa-camera" aria-hidden="true" style="
+    margin-left: 5px;
+    font-size: 18px;
+    color: var(--mau4);
+    cursor: pointer;
+"></i></label> <br />
+                    <img src="" id="img-avatar" alt="" style="
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+" />
+                    <input type="file" name="image_device" id="image_device"
+                        accept="image/x-png,image/gif,image/jpeg"></input>
+                </div>
+                <div class="bottom_form">
+                    <a href="javascript:void(0)" onclick="FormModifyDevice()"> CHỈNH SỬA </a>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+{{#section 'js'}}
+<script>
+    function changeShelf() {
+        var optionVal = $('#name_shelf').find(":selected").val();
+        var optionText = $('#name_shelf').find(":selected").text();
+        let data = {
+            id_shelf: optionVal
+        }
+        fetch("/menu/getCategory", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_category").html("");
+                data.unshift({ name_category: "Chọn Danh Mục", id_category: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_category").append(`<option value="${item.id_category}">${item.name_category}</option>`);
+                })
+            })
+    }
+    function changeCategory() {
+        var optionVal = $('#name_category').find(":selected").val();
+        var optionText = $('#name_category').find(":selected").text();
+        let data = {
+            id_category: optionVal
+        }
+        fetch("/menu/getProduct", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_product").html("");
+                data.unshift({ name_product: "Chọn Loại Dụng Cụ", id_product: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_product").append(`<option value="${item.id_product}">${item.name_product}</option>`);
+                })
+            })
+    }
+    function changeProduct() {
+        var optionVal = $('#name_product').find(":selected").val();
+        var optionText = $('#name_product').find(":selected").text();
+        let data = {
+            id_product: optionVal
+        }
+        fetch("/menu/getDevice", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_device").html("");
+                data.unshift({ name_device: "Chọn Dụng Cụ", id_device: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_device").append(`<option value="${item.id_device}">${item.name_device}</option>`);
+                })
+            })
+    }
+    function changeDevice() {
+        var optionVal = $('#name_device').find(":selected").val();
+        var optionText = $('#name_device').find(":selected").text();
+        let data = {
+            id_device: optionVal
+        }
+        fetch("/menu/getDevicebyId", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $('#note_device').val(`${data.note}`);
+                document.getElementById('img-avatar').src = `../../public/img/${data.image}`;
+                $('#img-avatar').attr('alt', `${data.image}`);
+                $("#img-avatar").css("display", "block");
+            })
+    }
+    function FormModifyDevice() {
+        let showErr = document.querySelector('.showErrr');
+        let optionVal = $('#name_product').find(":selected").val();
+        let deviceId = $('#name_device').find(":selected").val();
+        let image_device = document.querySelector("#image_device").files[0];
+        let img_default = document.getElementById("img-avatar").alt;
+        let note = document.getElementById('note_device').value;
+        var img = '';
+        var form_data = new FormData();
+        if (image_device != null) {
+            img = image_device;
+            form_data.append("image", img);
+        }
+        form_data.append("id_device", deviceId);
+        form_data.append("note", note);
+        $.ajax({
+            type: "POST",
+            data: form_data,
+            url: "/device/modifyDevice",
+            contentType: false,
+            processData: false,
+            headers: { "X-CSRF-Token": $("meta[name='csrf-token']").attr("content") },
+            success: function (data) {
+                $(".showErrr").html("Chỉnh sửa thành công!");
+                $(".showErrr").css("display", "block");
+                setTimeout(() => {
+                    $(".showErrr").css("display", "none");
+                    let pathname = window.location.pathname;
+                    window.location.replace(pathname);
+                }, 3000);
+            },
+            error: function (data) {
+
+            }
+        });
+    }
+    window.onload = function getPosition() {
+        $("#scan_rfid").html("Quét mã rfid");
+        $("#rfid").val("");
+        $("#name_device").val("");
+        $("#img-avatar").attr("src", "");
+        fetch("/menu/getShelf", {
+            method: 'POST',
+        })
+            .then(response => response.json())
+            .then(data => {
+                data.unshift({ name_shelf: "Chọn Ngăn Tủ", id_shelf: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_shelf").append(`<option value="${item.id_shelf}">${item.name_shelf}</option>`);
+                })
+            })
+
+    }
+    $("#img-avatar").css("display", "none");
+    $("#image_device").css("display", "none");
+    $('#image_device').change(function () {
+        var file = $(this)[0].files[0];
+        $("#img-avatar").css("display", "block");
+        var patterImage = new RegExp("image/*");
+        if (!patterImage.test(file.type)) {
+            alert("Vui lòng chọn hình ảnh.");
+        } else {
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = function (e) {
+                $("#img-avatar").attr("src", e.target.result);
+            }
+        }
+    })
+</script>
+{{/section}}
+{{#section 'title'}}
+Modifies
+{{/section}}
+{{#section 'css'}}
+<style>
+    div {
+        display: block;
+    }
+
+    i.addActive {
+        color: rgb(5, 219, 34);
+    }
+
+    .cabinet {
+        padding: 5px;
+        width: 40%;
+        margin: auto;
+        background-color: #9e0101;
+        border: 2px #790505 double;
+    }
+
+    .shelf {
+        display: block;
+        padding: 5px;
+        margin: auto;
+        width: 100%;
+        height: 30px;
+        background-color: #db0505;
+    }
+
+    i {
+        color: #ff0000;
+    }
+
+    .layout-cabinet {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        width: 532px;
+        height: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        display: grid;
+        grid-template-columns: repeat(19, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+    }
+
+    #output {
+        display: flex;
+    }
+
+    .slot {
+        background-color: #000000;
+        border: #ffffff 1px solid;
+        opacity: 0.4;
+        display: grid;
+    }
+
+    .slot:hover {
+        opacity: 0.6;
+        background-color: #d0f111;
+    }
+
+    .slot:focus {
+        opacity: 0.8;
+        background-color: #0587bb;
+    }
+
+    form {
+        box-shadow:
+            inset 0 -3em 3em rgba(0, 0, 0, 0.1),
+            0 0 0 2px rgb(255, 255, 255),
+            0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+        background-color: #91bacc;
+        padding: 0 20px;
+    }
+
+    .showErrr {
+        width: 400px;
+    }
+</style>
+{{/section}}

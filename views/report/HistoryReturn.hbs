@@ -1,0 +1,80 @@
+<div class="titleLogin">
+    <h3>Lịch sử thao tác</h3>
+</div>
+
+<div class="container">
+    <div class="menuHistory">
+        <ul>
+            <li><a href="/report/historyBorrow">MƯỢN</a></li>
+            <li class="active"><a href="#">TRẢ</a></li>
+            <li><a href="/report/historyGet">LẤY</a></li>
+        </ul>
+    </div>
+    <div class="btn-export">
+        <button onclick="exportReturn()">Export</button>
+    </div>
+    <div class="row">
+        <div class="panel-body col-md-12">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+
+                        <th scope="col">Họ và tên</th>
+                        <th scope="col">Mã RFID</th>
+                        <th scope="col">Thao tác</th>
+                        <th scope="col">Tên dụng cụ</th>
+                        <th scope="col">Tủ</th>
+                        <th scope="col">Ngày</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each historyReturn}}
+                    <tr>
+
+                        <td>{{full_name}}</td>
+                        <td>{{rfid}}</td>
+                        <td>{{name_report_status}}</td>
+                        <td>{{name_device}}</td>
+                        <td>
+                            {{name_shelf}}
+                        </td>
+                        <td>
+                            {{date_back}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panigation ">
+                <a href="?page={{prev}}" {{#if can_go_prev}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-left " aria-hidden="true" style="
+                        font-size:20px"></i></a>
+                {{#each pages_item}}
+                {{#if isActive}}
+                <a href="?page={{value}}" class="pages active" style="background-color:#2fb4c1;
+                        font-size:20px; border-radius: 50px;">
+                    {{value}} </a>
+                {{else}}
+                <a href="?page={{value}}" class="pages" style="
+                        font-size:20px"> {{value}} </a>
+                {{/if}}
+
+                {{/each}}
+                <a href="?page={{next}}" {{#if can_go_next}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-right" aria-hidden="true" style="
+                        font-size:20px"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{{#section 'js' }}
+<script>
+    function exportReturn() {
+        document.location = "/report/exportsReturn";
+    }
+</script>
+{{/section}}

@@ -1,0 +1,107 @@
+<div class="titleLogin">
+    <h3>Danh Sách Dụng Cụ Đã Mượn</h3>
+</div>
+<div class="container">
+
+    <div class="row">
+        <div class="panel-body col-md-12">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+
+                        <th scope="col">Tên Dụng Cụ</th>
+                        <th scope="col">Mã RFID</th>
+                        <th scope="col">Tủ</th>
+                        <th scope="col">Trả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each listDevice}}
+                        <tr class="rowDevice">
+                            <td class="name_device">{{name_device}}</td>
+                            <td class="rfid">{{rfid}}</td>
+                            <td class="name_shelf">{{name_shelf}}</td>
+                            <td>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="check_return_devicee('{{rfid}}','{{name_shelf}}')" >Trả</button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panigation ">
+                <a href="?page={{prev}}" {{#if can_go_prev}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-left " aria-hidden="true" style="
+                        font-size:20px"></i></a>
+                {{#each pages_item}}
+                {{#if isActive}}
+                <a href="?page={{value}}" class="pages active" style="background-color:#2fb4c1;
+                        font-size:20px; border-radius: 50px;">
+                    {{value}} </a>
+                {{else}}
+                <a href="?page={{value}}" class="pages" style="
+                        font-size:20px"> {{value}} </a>
+                {{/if}}
+
+                {{/each}}
+                <a href="?page={{next}}" {{#if can_go_next}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-right" aria-hidden="true" style="
+                        font-size:20px"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{{#section 'js'}}
+<script>
+    let rfidd = "";
+    function check_return_devicee(rfid,name_shelf){
+         let idtu = name_shelf.split(" ")[2];
+         rfidd = rfid;
+         let data = {
+             id_shelf: idtu,
+             rfid: rfidd
+         }
+         console.log(data);
+         socket.emit('RETURN_DEVICE', data);
+         alert('Tủ đã mở');
+    }
+    socket.on('CHECK_OPEN_SHELF_RETURN', (data) => {
+        if(data == "true") {
+            backDevice(rfidd);
+        }else{
+            alert('Bạn đã trả dụng cụ.');
+        }
+    })
+  
+    
+    function backDevice(rfidd) {
+        let dateToday = new Date().getTime();
+        let data = {
+            rfid: rfidd,
+            date_back: dateToday,
+        }
+        fetch("/device/backDevice", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+            .then(data => {
+                if (data.msgErr == undefined) {
+                    alert(data.msgSuccess);
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.log(error.message))
+    }
+</script>
+{{/section}}
+
+{{#section 'title'}}
+Trả Dụng cụ
+{{/section}}

@@ -1,0 +1,73 @@
+<div class="titleLogin">
+    <h3>SỐ LƯỢNG DỤNG CỤ CÒN LẠI TRONG KHO</h3>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="panel-body col-md-12">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+
+                        <th scope="col">Tên Dụng Cụ</th>
+                        <th scope="col">Số Lượng</th>
+                        <th scope="col">Cảnh Báo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each listInventory}}
+                    {{#if checkAmount}}
+                    {{#if (eq So_luong 0)}}
+                    <tr style="background-color: #d41836;">
+                        <td>{{name_product}}</td>
+                        <td>{{So_luong}}</td>     
+                        <td style="color: #d1dc21">Hết</td>
+                    </tr>
+                    {{else}}
+                     <tr style="background-color:#d8d778;">
+                        <td>{{name_product}}</td>
+                        <td>{{So_luong}}</td>     
+                        <td style="color: #235b75">Sắp Hết</td>
+                    </tr>
+                    {{/if}}
+                    {{else}}
+                    <tr>
+                        <td>{{name_product}}</td>
+                        <td>{{So_luong}}</td>
+                        <td style="color: rgb(16, 158, 75);">Đảm Bảo</td>
+                    </tr>  
+                    {{/if}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panigation ">
+                <a href="?page={{prev}}" {{#if can_go_prev}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-left " aria-hidden="true" style="
+                        font-size:20px"></i></a>
+                {{#each pages_item}}
+                {{#if isActive}}
+                <a href="?page={{value}}" class="pages active" style="padding: 10px;
+                 background-color: #2fb4c1;
+                font-size: 20px;
+                border-radius: 50%;margin-right: 5px;">
+                    {{value}} </a>
+                {{else}}
+                <a href="?page={{value}}" class="pages" style="
+                        font-size:20px"> {{value}} </a>
+                {{/if}}
+
+                {{/each}}
+                <a href="?page={{next}}" {{#if can_go_next}} style="display: none;" {{/if}}><i
+                        class="fa fa-chevron-right" aria-hidden="true" style="
+                        font-size:20px"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+{{#section 'js' }}
+<script>
+</script>
+{{/section}}

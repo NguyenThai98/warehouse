@@ -1,0 +1,81 @@
+<div class="titleLogin">
+    <h3>LOGIN</h3>
+</div>
+<div class="formLogin">
+    <form id="formLogin">
+        <div class="showErr"></div>
+        {{#if successMsg}}
+        <div class="showErr">{{successMsg}}</div>
+        {{/if}}
+        <div class="I_gmail">
+            <label for="user_name">Username</label> <br />
+            <input type="text" id="user_name" name="user_name" placeholder="Enter your username"></input>
+        </div>
+        <div class="I_password">
+            <label for="password">Password</label><br />
+            <input type="password" id="password" name="password" placeholder="Enter your password"></input>
+        </div>
+        <div class="bottom_form">
+            <a href="javascript:void(0)" onclick="submitFormLogin()"> LOGIN</a>
+        </div>
+    </form>
+</div>
+{{#section 'js'}}
+<script type="text/javascript">
+    let showErr = document.querySelector('.showErr');
+    function submitFormLogin() {
+        let user_name = document.querySelector('#user_name').value;
+        let password = document.querySelector('#password').value;
+        let user_name__ = document.querySelector('#user_name');
+        let password__ = document.querySelector('#password');
+        let data = {
+            user_name: user_name,
+            password: password,
+        }
+        if (validate(user_name, password)) {
+            fetch("/user/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined) {
+                        let pathname = window.location.pathname;
+                        if (pathname && pathname != '/user/login') {
+                            window.location.replace(pathname);
+                        } else {
+                            window.location.replace('/');
+                        }
+
+                    } else {
+                        showErr.innerHTML = data.msgErr;
+                        showErr.style.display = "block";
+                        setTimeout(() => {
+                            showErr.style.display = "none";
+                        }, 2000);
+                        user_name__.value = "";
+                        password__.value = "";
+                    }
+                })
+
+        }
+    }
+    function validate(username, password) {
+        if (username == "") {
+            alert("Please enter username");
+            return false;
+        }
+        if (password == "") {
+            alert("Please enter password");
+            return false;
+        }
+        return true;
+    }
+</script>
+{{/section}}
+{{#section 'title'}}
+Đăng Nhập
+{{/section}}

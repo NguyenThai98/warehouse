@@ -1,0 +1,36 @@
+<div class="titleLogin">
+    <h3>Kiểm kê</h3>
+</div>
+<div class="container">
+    <div class="row text-center">
+        <div class="col-md-6">
+            <button onclick="exportRemain()" type="button" class="btn btn_lg_ntt btn-info btn_left_export">Export excel</button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn btn_lg_ntt btn-secondary btn_right_open_key"
+                onclick="handleUnlockReport()">Mở khóa tủ</button>
+        </div>
+    </div>
+</div>
+{{#section 'js'}}
+<script>
+    socket.on('CLOSE_SHELF', (data) =>{
+        if(data == "1"){
+           setTimeout(() =>{
+                $('.titleLogin > h3').html('KIỂM KÊ');  
+           },2000)    
+        }
+    });
+    function handleUnlockReport() {
+        socket.emit('SEND_KEY_ALL', "OPEN_ALL");
+        $('.titleLogin > h3').html('ĐANG MỞ KHÓA TỦ...');
+    }
+    function exportRemain() {
+            document.location = "/report/remaining";
+    }
+</script>
+{{/section}}
+
+{{#section 'title'}}
+Kiểm kê
+{{/section}}

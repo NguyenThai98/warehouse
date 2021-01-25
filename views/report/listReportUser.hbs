@@ -1,0 +1,55 @@
+<section>
+    <div class="title_reportUser">
+        <h3>Tra cứu lịch sử</h3>
+    </div>
+    <div class="list_reportUser">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên dụng cụ</th>
+                    <th>Thời gian lấy</th>
+                    <th>Thời gian trả</th>
+                    <th>Tình Trạng</th>
+                </tr>
+            </thead>
+            <tbody class="tbody_reportUser">
+                {{#if reportUser}}
+                {{#each reportUser}}
+                <tr>
+                    <td>{{name_device}}</td>
+                    <td class="Sdate_rent">{{date_rent}}</td>
+                    <td class="Sdate_back">{{date_back}}</td>
+                    {{#if isAccept}}
+                    <td onclick="checkStatus()"><button class="check_status">{{check_status}}</button></td>
+                    {{else}}
+                    <td><button class="check_status">{{check_status}}</button></td>
+                    {{/if}}
+
+                </tr>
+                {{/each}}
+                {{/if}}
+            </tbody>
+        </table>
+    </div>
+</section>
+{{#section 'js'}}
+<script>
+    function checkStatus() {
+        let check_status = document.querySelector('.check_status').textContent;
+        let btn_check_status = document.querySelector('.check_status');
+        let Sdate_rent = document.querySelector('.Sdate_rent').textContent;
+        let Sdate_back = document.querySelector('.Sdate_back').textContent;
+        let date_rent = new Date();
+        date_rent = date_rent.getTime();
+        Sdate_rent = Sdate_rent.split("/").join(",").split(":").join(",").split(" ").join(",").split(",");
+        let nSdate_rent = new Date(Sdate_rent[2], Sdate_rent[1] - 1, Sdate_rent[0], Sdate_rent[3], Sdate_rent[4]);
+        if (check_status == 'Đã được duyệt' && Sdate_rent == date_rent) {
+        } else {
+            btn_check_status.style.disabled = true;
+        }
+    }
+    checkStatus();
+
+</script>
+{{/section}}

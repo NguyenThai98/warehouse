@@ -1,0 +1,407 @@
+<div class="cabinet mt-4">
+    <button id="shelf1" position="1" class="shelf" onclick="myapp(this)">
+        <i class="fa fa-circle"></i>
+    </button>
+    <button id="shelf2" position="2" class="shelf" onclick="myapp(this)">
+        <i class="fa fa-circle"></i>
+    </button>
+</div>
+<form enctype='multipart/form-data'>
+    <input type='file' id='verborgen_file' accept='image/*' />
+    <input type="button"
+        style="padding: 10px 30px;margin: 6px;border: 1px solid var(--mau4);background: var(--mau1);color: var(--mau4);font-weight: bold;cursor: pointer;outline:none;display:none;"
+        value="Upload" id="uploadButton" />
+</form>
+<div class="layout-cabinet">
+</div>
+<div class="modal fade" id="register_Device" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title text-uppercase text-center" id="exampleModalLongTitle">Đăng ký dụng cụ</h5>
+            </div>
+            <div class="modal-body">
+                <div class="formRegister">
+                    <form id="formRegister">
+                        <div class="showErr_01"></div>
+                        <div class="I_gmail">
+                            <label for="name_device">Tên dụng cụ</label> <br />
+                            <input type="text" name="name_device" id="name_device"
+                                placeholder="Nhập tên dụng cụ"></input>
+                        </div>
+                        <div class="I_gmail">
+                            <label for="image_device" style="
+    cursor: pointer;
+">Thêm hình ảnh<i class="fa fa-camera" aria-hidden="true" style="
+    margin-left: 5px;
+    font-size: 18px;
+    color: var(--mau4);
+    cursor: pointer;
+"></i></label> <br />
+                            <img src="" id="img-avatar" style="
+    width: 200px;
+    height: 50px;
+    object-fit: cover;
+" />
+                            <input type="file" name="image_device" id="image_device"
+                                accept="image/x-png,image/gif,image/jpeg"></input>
+                        </div>
+                        <div class="I_gmail">
+                            <label for="name_shelf">Ngăn tủ</label> <br />
+                            <select name="name_shelf" onchange="changeShelf()" id="name_shelf">
+                            </select>
+                        </div>
+                        <div class="I_gmail">
+                            <label for="name_category">Danh mục</label> <br />
+                            <select name="name_category" onchange="changeCategory()" id="name_category">
+                            </select>
+                        </div>
+
+                        <div class="I_password">
+                            <label for="name_product">Loại dụng cụ</label><br />
+                            <select name="name_product" id="name_product">
+                            </select>
+
+                        </div>
+                        <div class="I_password">
+                            <label for="rfid">RFID</label><br />
+                            <input type="text" id="rfid" name="rfid" placeholder="Mã RFID"></input>
+                            <div id="scan_rfid" onclick="scan_rfid()"
+                                style="text-align: center;background: var(--mau4);font-weight: bold;cursor: pointer;color: var(--mau1);">
+                                Quét mã rfid</div>
+                        </div>
+                        <div class="bottom_form">
+                            <a href="javascript:void(0)" onclick="FormRegisterDevice()"> ĐĂNG KÝ </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="editRegisterAccount"
+                    data-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#section 'title'}}
+Layout
+{{/section}}
+{{#section 'css'}}
+<style>
+    div {
+        display: block;
+    }
+
+    i.addActive {
+        color: rgb(5, 219, 34);
+    }
+
+    .cabinet {
+        padding: 5px;
+        width: 40%;
+        margin: auto;
+        background-color: #9e0101;
+        border: 2px #790505 double;
+    }
+
+    .shelf {
+        display: block;
+        padding: 5px;
+        margin: auto;
+        width: 100%;
+        height: 30px;
+        background-color: #db0505;
+    }
+
+    i {
+        color: #ff0000;
+    }
+
+    .layout-cabinet {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        width: 532px;
+        height: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        display: grid;
+        grid-template-columns: repeat(19, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+    }
+
+    #output {
+        display: flex;
+    }
+
+    .slot {
+        background-color: #000000;
+        border: #ffffff 1px solid;
+        opacity: 0.4;
+        display: grid;
+    }
+
+    .slot:hover {
+        opacity: 0.6;
+        background-color: #d0f111;
+    }
+
+    .slot:focus {
+        opacity: 0.8;
+        background-color: #0587bb;
+    }
+</style>
+{{/section}}
+{{#section 'js'}}
+
+<script>
+    socket.on('CLIENT_REVICE_RFID', (data) => {
+        $("#rfid").val(data);
+        $("#scan_rfid").html("Quét mã rfid hoàn tất.");
+        socket.emit('SCAN_RFID_REGISTER_DEVICE', "OK");
+    })
+    let lrue = 0;
+    let s1 = 1;
+    let s2 = 2;
+    let pos_x = -1;
+    let pos_y = -1;
+    let position_shelf = -1;
+    let uploadButton = document.querySelector('#uploadButton');
+    uploadButton.style.display = 'none';
+    function changeShelf() {
+        var optionVal = $('#name_shelf').find(":selected").val();
+        var optionText = $('#name_shelf').find(":selected").text();
+        let data = {
+            id_shelf: optionVal
+        }
+        fetch("/menu/getCategory", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_category").html("");
+                data.unshift({ name_category: "Chọn Ngăn Tủ", id_category: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_category").append(`<option value="${item.id_category}">${item.name_category}</option>`);
+                })
+            })
+    }
+    function changeCategory() {
+        var optionVal = $('#name_category').find(":selected").val();
+        var optionText = $('#name_category').find(":selected").text();
+        let data = {
+            id_category: optionVal
+        }
+        fetch("/menu/getProduct", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_product").html("");
+                data.unshift({ name_product: "Chọn Ngăn Tủ", id_product: -1 });
+                data.forEach((item, index) => {
+                    $("select#name_product").append(`<option value="${item.id_product}">${item.name_product}</option>`);
+                })
+            })
+    }
+    function FormRegisterDevice() {
+        let optionVal = $('#name_product').find(":selected").val();
+        let image_device = document.querySelector("#image_device").files[0];
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let Hour = date.getHours();
+        let Minute = date.getMinutes();
+        let date_inn = `${Minute} : ${Hour} ${day} : ${month} : ${year}`
+        let form_data = new FormData();
+        if (!image_device || !$("#name_device").val() || !pos_x || !pos_y || !$("#rfid").val() || !date_inn || !optionVal) {
+            alert('Vui lòng điền đầy đủ thông tin.');
+            return;
+        }
+        form_data.append("image", image_device);
+        form_data.append("name_device", $("#name_device").val());
+        form_data.append("pos_x", pos_x);
+        form_data.append("pos_y", pos_y);
+        form_data.append("rfid", $("#rfid").val());
+        form_data.append("data_in", date_inn);
+        form_data.append("id_product", +optionVal);
+        $.ajax({
+            type: "POST",
+            data: form_data,
+            url: "/device/addDevice",
+            contentType: false,
+            processData: false,
+            headers: { "X-CSRF-Token": $("meta[name='csrf-token']").attr("content") },
+            success: function (data) {
+                if (data.keyAddDevice == 1) {
+                    $(".showErr_01").html(data.msgSuccess);
+                    $(".showErr_01").css("display", "block");
+                    setTimeout(() => {
+                        $(".showErr_01").css("display", "none");
+                         
+                        $("#editRegisterAccount").click();
+                        socket.emit('REGISTERR_DEVICE', "Có dụng cụ thêm mới.")
+                    }, 3000);
+                }
+            },
+            error: function (error) {
+                $(".showErr_01").html(error.responseJSON.msgErr);
+                $(".showErr_01").css("display", "block");
+                setTimeout(() => {
+                    $(".showErr_01").css("display", "none");
+                }, 3000);
+            }
+        });
+    }
+
+    function scan_rfid() {
+        socket.emit("SCAN_RFID_REGISTER_DEVICE", "SCAN_RFID");
+        $("#scan_rfid").html("Đang quét mã rfid...");
+    }
+
+    function myapp(shelf) {
+        position_shelf = shelf.getAttribute('position');
+        let cabinet = $(".layout-cabinet");
+        let addActive = document.querySelector('.addActive');
+        uploadButton.style.display = 'block';
+        let data = {
+            id_shelf: position_shelf
+        }
+        fetch("/device/getShefl", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ImgShelf == null) {
+                    uploadButton.value = "Thêm hình ảnh";
+                    $('.layout-cabinet').css('background-image', 'none');
+                } else {
+                    uploadButton.value = "Cập nhật ảnh";
+                    $('.layout-cabinet').css('background-image', 'url("/public/img/' + data.ImgShelf + '")');
+                }
+            })
+        if (addActive) {
+            addActive.classList.remove("addActive");
+            shelf.querySelector("i").classList.add("addActive");
+        } else {
+            shelf.querySelector("i").classList.add("addActive");
+        }
+        $(".slot").remove();
+        fetch("/device/showPosition", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                for (let j = 1; j <= 12; j++) {
+                    for (let i = 1; i <= 19; i++) {
+                        cabinet.append("<div class ='slot' onclick='getPosition(" + j + "," + i + ")' data-toggle='modal' data-target='#register_Device' id = '" + j + "-" + i + "' style = 'grid-row : " + j + "; grid-column : " + i + "'></div>");
+                    }
+                }
+                let aSlot = document.querySelectorAll('.slot');
+                for (let i = 0; i < aSlot.length; i++) {
+                    if (data.includes(aSlot[i].id)) {
+                        aSlot[i].style.backgroundColor = '#d0f111';
+                        // aSlot[i].style.pointerEvents = "none";
+                    }
+                }
+            })
+    }
+
+    $('#verborgen_file').hide();
+    $('#uploadButton').on('click', function () {
+        $('#verborgen_file').click();
+    });
+
+    $('#verborgen_file').change(function () {
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            $('.layout-cabinet').css('background-image', 'url("' + reader.result + '")');
+        }
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+        }
+        var form_data = new FormData();
+        attachment_data = file;
+        form_data.append("image", attachment_data);
+        form_data.append("position_sheft", position_shelf);
+        $.ajax({
+            type: "POST",
+            data: form_data,
+            url: "/device/uploadShelf",
+            contentType: false,
+            processData: false,
+            headers: { "X-CSRF-Token": $("meta[name='csrf-token']").attr("content") },
+            success: function (data) {
+            },
+            error: function (data) {
+            }
+        });
+
+    });
+    function getPosition(pos_xx, pos_yy) {
+        pos_x = pos_xx;
+        pos_y = pos_yy;
+        $("#scan_rfid").html("Quét mã rfid");
+        $("#rfid").val("");
+        $("#name_device").val("");
+        $("#img-avatar").css("display", "none");
+        $("#img-avatar").attr("src", "");
+        fetch("/menu/getShelf", {
+            method: 'POST',
+        })
+            .then(response => response.json())
+            .then(data => {
+                $("select#name_shelf").html("");
+                $("select#name_shelf").append(`<option value="-1">Chọn Ngăn Tủ</option>`);
+                data.forEach((item, index) => {
+                    if (item.id_shelf == position_shelf) {
+                        $("select#name_shelf").append(`<option value="${item.id_shelf}">${item.name_shelf}</option>`);
+                    }
+                })
+
+            })
+
+    }
+    $("#img-avatar").css("display", "none");
+    $("#image_device").css("display", "none");
+    $('#image_device').change(function () {
+        var file = $(this)[0].files[0];
+        $("#img-avatar").css("display", "block");
+        var patterImage = new RegExp("image/*");
+        if (!patterImage.test(file.type)) {
+            alert("Vui lòng chọn hình ảnh.");
+        } else {
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = function (e) {
+                $("#img-avatar").attr("src", e.target.result);
+            }
+        }
+    })
+</script>
+{{/section}}

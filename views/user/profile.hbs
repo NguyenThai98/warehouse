@@ -1,0 +1,142 @@
+<main class="info_user">
+    {{#if lcIsAuthenticated}}
+    <div class="profile">
+        <div class="showErrr"></div>
+        <div class="avatar">
+            {{#if lcAuthUser.avatar}}
+            <img src="/public/img/{{lcAuthUser.avatar}}" id="img-avatar" alt="" />
+            <span>
+                <label for="image_device"> <i class="fa fa-camera" aria-hidden="true"></i></label>
+                <input type="file" name="image_device" id="image_device" accept="image/x-png,image/gif,image/jpeg" />
+            </span>
+            {{else}}
+            <img src="/public/img/avt_detail.png" id="img-avatar" alt="" />
+            <span>
+                <label for="image_device"> <i class="fa fa-camera" aria-hidden="true"></i></label>
+                <input type="file" name="image_device" id="image_device" accept="image/x-png,image/gif,image/jpeg" />
+            </span>
+            {{/if}}
+        </div>
+        <div class="form_group_ntt">
+            <label for="name">Full Name</label>
+            <input type="text" name="name" id="name" disabled="disabled" value="{{lcAuthUser.full_name}}"
+                placeholder="Your name..." />
+        </div>
+        <div class="form_group_ntt">
+            <label for="role">Chức vụ</label>
+            <input type="text" name="role" id="role" disabled="disabled" value="{{lcAuthUser.roomUser}}" />
+        </div>
+
+        <div class="form_group_ntt">
+            <label for="rfid">RFID</label>
+            <input type="rfid" name="rfid" id="rfid" value="{{lcAuthUser.rfid}}" disabled="disabled"
+                placeholder="Your rfid address" />
+        </div>
+
+        <div class="form_group_ntt">
+            <label for="password">New Password</label>
+            <input type="password" name="password" minlength="6" maxlength="20" id="password"
+                placeholder="New password..." />
+        </div>
+
+        <div class="form_group_ntt">
+            <label for="cf_password">Confirm New Password</label>
+            <input type="password" name="cf_password" minlength="6" maxlength="20" id="cf_password"
+                placeholder="Confirm password..." />
+        </div>
+
+        <div class="update_info"> <button onclick="handleUpdateProfile()">Update</button></div>
+    </div>
+    {{/if}}
+</main>
+{{#section 'js' }}
+
+
+<script>
+    let data = JSON.parse(localStorage.getItem('data_device'));
+    if (data) {
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].status == 'không khóa') {
+                $('.addData_device').append(` <tr>
+                    <td>${data[i].name_device}</td>
+                    <td>${data[i].pos_x} / ${data[i].pos_y}</td>
+                    <td class="borrow_device">Mượn</td>
+                </tr>`);
+            } else {
+                $('.addData_device').append(` <tr>
+                    <td>${data[i].name_device}</td>
+                    <td>${data[i].pos_x} / ${data[i].pos_y}</td>
+                    <td class="taken_device">Trả</td>
+                </tr>`);
+            }
+        }
+        localStorage.setItem('data_device', []);
+    }
+
+    $('#image_device').change(function () {
+        var file = $(this)[0].files[0];
+        var patterImage = new RegExp("image/*");
+        if (!patterImage.test(file.type)) {
+            alert("Vui lòng chọn hình ảnh.");
+        } else {
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = function (e) {
+                $("#img-avatar").attr("src", e.target.result);
+            }
+        }
+    })
+    function handleUpdateProfile() {
+        let password = document.getElementById('password').value;
+        let image_avatar = document.querySelector("#image_device").files[0];
+        let cf_password = document.getElementById('cf_password').value;
+        var img = '';
+        let pw = '';
+        if (password.length < 6) {
+            $(".showErrr").html("Mật Khẩu Phải Lớn hơn 6 Kí Tự");
+            $(".showErrr").css("display", "block");
+            setTimeout(() => {
+                $(".showErrr").css("display", "none");
+                let pathname = window.location.pathname;
+                window.location.replace(pathname);
+            }, 2000);
+        }
+        if (password === cf_password) {
+            pw = cf_password;
+        } else {
+            $(".showErrr").html("Mật Khẩu Xác Thực Sai!");
+            $(".showErrr").css("display", "block");
+            setTimeout(() => {
+                $(".showErrr").css("display", "none");
+                let pathname = window.location.pathname;
+                window.location.replace(pathname);
+            }, 2000);
+        }
+        var form_data = new FormData();
+        form_data.append("password", pw);
+        if (image_avatar != null) {
+            img = image_avatar;
+            form_data.append("avatar", img);
+        }
+        $.ajax({
+            type: "POST",
+            data: form_data,
+            url: "/user/updateProfile",
+            contentType: false,
+            processData: false,
+            headers: { "X-CSRF-Token": $("meta[name='csrf-token']").attr("content") },
+            success: function (data) {
+                $(".showErrr").html("Cập nhật thành công!");
+                $(".showErrr").css("display", "block");
+                setTimeout(() => {
+                    $(".showErrr").css("display", "none");
+                    window.location.replace("/user/logout");
+                }, 2000);
+            },
+            error: function (data) {
+
+            }
+        });
+    }
+</script>
+{{/section}}

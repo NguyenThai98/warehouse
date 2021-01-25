@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{{_sections.title}}}</title>
+    <!-- gg font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abel&family=Livvic:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Cusstom css -->
+    <link rel="stylesheet" type="text/css" href="/public/css/style-home.css" />
+
+    {{{_sections.css}}}
+</head>
+
+<body>
+    {{#if THEM_DUNG_CU}}
+        <div class="alert alert-primary alert-dismissible fade show left_device notification_acceptt" role="alert">
+            <strong class="notification"></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {{/if}}
+    {{#if DUYET_DUNG_CU}}
+    <div class="alert alert-primary notification_accept" role="alert" style="
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    display: none;
+    transition: 0.4s;
+    ">
+
+    </div>
+    {{/if}}
+    <nav>
+        <div class="container">
+            <div class="row" id="menu">
+                <div class="col-9">
+                    <ul class="menu">
+                        <li class="nav">
+                            <a href="/">TRANG CHỦ</a>
+                        </li>
+                        {{#if THEM_DUNG_CU }}
+                        <li class="nav"><a href="/device/layout">QUẢN LÝ TỦ</a>
+                            <ul>
+                                {{!-- <li><a href="/device/addDevice">Thêm dụng cụ</a></li> --}}
+                                {{!-- <li><a href="/device/importList">Import list</a></li> --}}
+                                <li><a href="/device/layout">Layout tủ</a></li>
+                            </ul>
+                        </li>
+                        {{/if}}
+                        {{#if PHAN_QUYEN_CAP_NHAT_MK}}
+                        <li class="nav"><a href="/admin/auth">QUẢN LÝ USER</a>
+                            <ul>
+                                <li><a href="/admin/auth">Phân quyền</a></li>
+                            </ul>
+                        </li>
+                        {{/if}}
+                        {{#or DUYET_DUNG_CU XUAT_FILE_KIEM_KE}}
+                        <li class="nav"><a href="#">BÁO CÁO</a>
+                            <ul>
+                                <li><a href="/report/historyBorrow">Lịch Sử</a></li>
+                                <li><a href="/device/checkShelf">Kiểm kê</a></li>
+                                {{#if CAP_NHAT_CL_DUNG_CU}}
+                                <li><a href="/device/modifies">Hiệu chỉnh</a></li>
+                                {{/if}}
+                                {{#if DUYET_DUNG_CU}}
+                                <li><a href="/admin/accepts">Duyệt</a></li>
+                                {{/if}}
+                                <li><a href="/report/inventory">Thiết Bị Tồn Kho</a></li>
+                            </ul>
+                        </li>
+                        {{/or}}
+                        {{#if DANG_KY_TU_XA}}
+                        <li class="nav"> <a href="/report/historyOrder">LIST ĐĂNG KÝ</a>
+                        </li>
+                        {{/if}}
+                        {{#if PHAN_QUYEN_CAP_NHAT_MK}}
+                        <li class="nav"> <a href="/admin/system">SYSTEM</a>
+                        </li>
+                        {{/if}}
+                    </ul>
+                </div>
+                <div class="col-3">
+                    <ul class="menu">
+                        <li class="nav info">
+                            {{#if lcIsAuthenticated}}
+                                {{#if lcAuthUser}}
+                                     <div class="menu_info">
+                                         {{#if (eq check_avatar true)}}
+                                             <img src="/public/img/avt_detail.png" width="25px" height="25px" alt="avatar">
+                                         {{else}}
+                                             <img src="/public/img/{{lcAuthUser.avatar}}" width="25px" height="25px" alt="avatar">
+                                         {{/if}}
+                                      
+                                        <span><a href="/user/info" class="full_name_header">{{lcAuthUser.full_name}}</a></span>
+                                    </div>
+                                    <div class="login">
+                                        <a href="/user/logout">Đăng Xuất</a>
+                                    </div>
+                                    {{else}}
+                                    <div class="login">
+                                        <a href="/user/login">Đăng Nhập</a>
+                                    </div>
+                                {{/if}}
+                            {{/if}}
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {{{body}}}
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/js/home.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {{{_sections.js}}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Cusstom javascrips -->
+
+
+</body>
+
+</html>
