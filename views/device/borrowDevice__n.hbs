@@ -66,6 +66,12 @@
         }else{
             alert('Mượn dụng cụ thất bại.');
         }
+    });
+    socket.on('LISTEN_OPEN_SHELF', (data) => {
+        console.log(data);
+         if(data == "1"){
+            alert('Tủ đã mở');
+        }
     })
     function fBorrowOpenShelf(){
         let rfid = document.querySelector('.rfid_hide').value;
@@ -75,7 +81,6 @@
             rfid
         };
         socket.emit('OPEN_SHELF',data);
-        alert("Tủ đã mở");
     }
 
     function fBorrow() {

@@ -110,8 +110,14 @@
         fullName = full_name;
         nameDevice = name_device;
         socket.emit("REGISTER_DEVICE", data);
-        alert("Tủ đã mở");
     }
+    socket.on('LISTEN_OPEN_SHELF_REGISTER', (data) => {
+         console.log(data);
+        if(data == "1"){
+            alert('Tủ đã mở');
+        }
+       
+    })
     socket.on('CHECK_OPEN_SHELF_REGISTER', (data) => {
 
         if(data == "true") {

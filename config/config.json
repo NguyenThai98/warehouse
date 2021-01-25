@@ -1,11 +1,13 @@
-{ 
+{  
     "mysql": {
-        "host": "us-cdbr-east-02.cleardb.com",
-        "user": "b7924495ed6cb3",
-        "password": "33d747c6",
-        "database": "heroku_b433dd5dfb837a9",
-        "connectionLimit": 50
-    },
+    "host": "localhost",
+    "user": "root",
+    "port": 3306,
+    "password": "",
+    "database": "dbwarehouse",
+    "connectionLimit": 50
+},
+
     "TOKEN": "asjdlasldjasjd;las;lldk[pkqwpi]iqwe[i=qwq",
     "URL": "http://localhost:9000"
 }

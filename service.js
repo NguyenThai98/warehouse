@@ -31,6 +31,7 @@ app.get('/', auth, function (req, res) {
     res.render('home/home');
 });
 io.on('connection', (socket) => {
+    console.log(socket.id);
     app.set('socket', socket);
     //scanRFID
     socket.on('SCAN_RFID_REGISTER_DEVICE', (data) => {
@@ -45,13 +46,12 @@ io.on('connection', (socket) => {
 
     // GỬI ALL KEY KIỂM KÊ,
     socket.on('SEND_KEY_ALL', (data) => {
-        console.log(data);
         socket.broadcast.emit('OPEN_ALL_SHELF', "1");
     })
     socket.on('CLOSE_SHELF', (data) => {
         socket.broadcast.emit('CLOSE_SHELF', data);
     })
-     // GỬI ALL KEY KIỂM KÊ xxx,
+    // GỬI ALL KEY KIỂM KÊ xxx,
     socket.on('CLIENT_BORROW_DEVICE', (data) => {
         socket.emit('SERVER_SEND_AUTH_BORROW', `Tài khoản ${data.full_name} vừa mượn ${data.name_device}`);
     });
@@ -62,7 +62,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('SERVER_SEND_AUTH_TAKEN', `Tài khoản ${data.full_name} vừa lấy ${data.name_device}`);
     });
     socket.on('REGISTER_ACCOUNT', (data) => {
-        console.log(data);
         socket.broadcast.emit('SERVER_SEND_REGISTER_ACCOUNT', data);
     })
     socket.on('REGISTERR_DEVICE', (data) => {
@@ -71,11 +70,11 @@ io.on('connection', (socket) => {
     socket.on('SCAN_PLC_SYSTEM', (data) => {
         socket.join('PLC');
         data = data.toString();
-        socket.broadcast.emit('RECIVE_DATA_SYSTEM',data);
+        socket.broadcast.emit('RECIVE_DATA_SYSTEM', data);
     });
     socket.on('SCAN_READER_SYSTEM', (data) => {
         socket.join('READER');
-        socket.broadcast.emit('RECIVE_READER_SYSTEM',data);
+        socket.broadcast.emit('RECIVE_READER_SYSTEM', data);
     });
     // Mượn
     socket.on('OPEN_SHELF', (data) => {
@@ -84,59 +83,67 @@ io.on('connection', (socket) => {
     socket.on('CHECK_OPEN_SHELF', (data) => {
         socket.broadcast.emit('CHECK_OPEN_SHELFF', data);
     });
-    // socket.on('CHECK_OPEN_SHELF_FALSE',data =>{
-    //     socket.broadcast.emit('CHECK_OPEN_SHELFF', data);
-    // })
+    socket.on('LISTEN_OPEN_SHELF',data =>{
+        socket.broadcast.emit('LISTEN_OPEN_SHELF', data);
+    })
     // LAY DUNG CU
-    socket.on('TAKEN_DEVICE', (data)=>{
-        socket.broadcast.emit('OPENED_SHELF_TAKEN',data); 
+    socket.on('TAKEN_DEVICE', (data) => {
+        socket.broadcast.emit('OPENED_SHELF_TAKEN', data);
     })
     socket.on('CHECK_OPEN_SHELF_TAKEN', (data) => {
         socket.broadcast.emit('CHECK_OPEN_SHELF_TAKEN', data);
     });
-
+    socket.on('LISTEN_OPEN_SHELF_TAKEN',data =>{
+        socket.broadcast.emit('LISTEN_OPEN_SHELF_TAKEN', data);
+    })
     // ĐĂNG KÝ DUNG CU
-    socket.on('REGISTER_DEVICE', (data)=>{
-        socket.broadcast.emit('OPENED_SHELF_REGISTER',data); 
+    socket.on('REGISTER_DEVICE', (data) => {
+        socket.broadcast.emit('OPENED_SHELF_REGISTER', data);
     })
     socket.on('CHECK_OPEN_SHELF_REGISTER', (data) => {
         socket.broadcast.emit('CHECK_OPEN_SHELF_REGISTER', data);
     });
+    socket.on('LISTEN_OPEN_SHELF_REGISTER',data =>{
+        socket.broadcast.emit('LISTEN_OPEN_SHELF_REGISTER', data);
+    })
     // ĐĂNG KÝ DUNG CU xxx
 
 
     // TRẢ DUNG CU
-    socket.on('RETURN_DEVICE', (data)=>{
-        socket.broadcast.emit('OPENED_SHELF_RETURN',data); 
+    socket.on('RETURN_DEVICE', (data) => {
+        socket.broadcast.emit('OPENED_SHELF_RETURN', data);
     })
     socket.on('CHECK_OPEN_SHELF_RETURN', (data) => {
         socket.broadcast.emit('CHECK_OPEN_SHELF_RETURN', data);
     });
+    socket.on('LISTEN_OPEN_SHELF_RETURN',data =>{
+        socket.broadcast.emit('LISTEN_OPEN_SHELF_RETURN', data);
+    })
     // TRẢ DUNG CU xxx
 
     // ROMM QUOC
     var tmp = "";
-    socket.on("room", function(da11){
+    socket.on("room", function (da11) {
         tmp = da11;
         socket.join(da11);
-      });
-    
-    socket.on("PUB_READER", function(data){
-        io.sockets.in(tmp).emit('PLC', data); 
     });
-    
-    socket.on("PUB_PLC", function(data){
-        io.sockets.in(tmp).emit('READER', data); 
+
+    socket.on("PUB_READER", function (data) {
+        io.sockets.in(tmp).emit('PLC', data);
+    });
+
+    socket.on("PUB_PLC", function (data) {
+        io.sockets.in(tmp).emit('READER', data);
     });
     // ROMM QUOC XXX
 
-    socket.on('disconnect', function(){
-        if(io.sockets.adapter.rooms['PLC'] == undefined){
-             socket.broadcast.emit('RECIVE_DATA_SYSTEM',null);
+    socket.on('disconnect', function () {
+        if (io.sockets.adapter.rooms['PLC'] == undefined) {
+            socket.broadcast.emit('RECIVE_DATA_SYSTEM', null);
         }
-        if(io.sockets.adapter.rooms['READER'] == undefined){
-            socket.broadcast.emit('RECIVE_READER_SYSTEM',null);
-       }
+        if (io.sockets.adapter.rooms['READER'] == undefined) {
+            socket.broadcast.emit('RECIVE_READER_SYSTEM', null);
+        }
     });
 })
 app.use(express.urlencoded({ extended: true }));
@@ -146,7 +153,7 @@ app.use(function (req, res) {
 app.use(function (err, req, res, next) {
     res.status(500).render('notification/404', { layout: false });
 })
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
     console.log(`start sever at port http://localhost:${PORT}`);
 })

@@ -104,6 +104,12 @@
             alert('Bạn đã lấy sai dụng cụ.');
         }
     })
+    socket.on('LISTEN_OPEN_SHELF_TAKEN', (data) => {
+         console.log(data);
+         if(data == "1"){
+            alert('Tủ đã mở');
+        }
+    })
     function socketTakenDevice() {
         let rfid = document.querySelector('.rfid_hide').value;
         let name_device = document.querySelector('span.name_device').textContent;
@@ -117,7 +123,6 @@
             rfid
         }
         socket.emit('TAKEN_DEVICE', data);
-        alert("Tủ đã mở");
     }
     function handleTakenDevice() {
         let rfid = document.querySelector('.rfid_hide').value;

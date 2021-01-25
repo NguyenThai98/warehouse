@@ -67,8 +67,13 @@
          }
          console.log(data);
          socket.emit('RETURN_DEVICE', data);
-         alert('Tủ đã mở');
     }
+    socket.on('LISTEN_OPEN_SHELF_RETURN', (data) => {
+         console.log(data);
+        if(data == "1"){
+            alert('Tủ đã mở');
+        }
+    })
     socket.on('CHECK_OPEN_SHELF_RETURN', (data) => {
         if(data == "true") {
             backDevice(rfidd);

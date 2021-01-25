@@ -181,50 +181,70 @@ System
         } else if (data == null) {
             $(".plc").css('animation', "none");
             $(".btn_system.plc").css('animation', "none");
+            
+            $(`.key.key1`).css('animation', "none");
+            $(`span.btn_system.key.key1`).css('animation', "none");
+            $(`.key.key2`).css('animation', "none");
+            $(`span.btn_system.key.key2`).css('animation', "none");
+            $(`.key.key3`).css('animation', "none");
+            $(`span.btn_system.key.key3`).css('animation', "none");
+            $(`.key.key4`).css('animation', "none");
+            $(`span.btn_system.key.key4`).css('animation', "none");
+            $(`.key.key5`).css('animation', "none");
+            $(`span.btn_system.key.key5`).css('animation', "none");
+
+            $(`.switch.switch1`).css('animation', "none");
+            $(`.btn_system.switch.switch1`).css('animation', "none");
+            $(`.switch.switch2`).css('animation', "none");
+            $(`.btn_system.switch.switch2`).css('animation', "none");
+            $(`.switch.switch3`).css('animation', "none");
+            $(`.btn_system.switch.switch3`).css('animation', "none");
+            $(`.switch.switch4`).css('animation', "none");
+            $(`.btn_system.switch.switch4`).css('animation', "none");
+            $(`.switch.switch5`).css('animation', "none");
+            $(`.btn_system.switch.switch5`).css('animation', "none");
         }
          if (data_system != undefined) {
-        if (data_system["K"]) {
-           
-             let allKey = document.querySelectorAll("li.key");
-             for (let i = 0; i < allKey.length; i++){
-                let on = allKey[i].getAttribute("on");
-                if (data_system["K"][on] == 1) {
-                    $(`.key.key${+on}`).css('animation', "animation_color .3s linear infinite");
-                } else {
-                    $(`.key.key${+on}`).css('animation', "none");
+            if (data_system["K"]) {
+                let allKey = document.querySelectorAll("li.key");
+                for (let i = 0; i < allKey.length; i++){
+                    let on = allKey[i].getAttribute("on");
+                    if (data_system["K"][on] == 1) {
+                        $(`.key.key${+on}`).css('animation', "animation_color .3s linear infinite");
+                    } else {
+                        $(`.key.key${+on}`).css('animation', "none");
+                    }
+                }
+                let allDot_key = document.querySelectorAll(".btn_system.key");
+                for (let i = 0; i < allDot_key.length; i++){
+                    let on = allDot_key[i].getAttribute("on");
+                    if (data_system["K"][on] == 1) {
+                        $(`span.btn_system.key.key${+on}`).css('animation', "animation_active .3s linear infinite");
+                    } else {
+                        $(`span.btn_system.key.key${+on}`).css('animation', "none");
+                    }
                 }
             }
-             let allDot_key = document.querySelectorAll(".btn_system.key");
-            for (let i = 0; i < allDot_key.length; i++){
-                let on = allDot_key[i].getAttribute("on");
-                if (data_system["K"][on] == 1) {
-                    $(`span.btn_system.key.key${+on}`).css('animation', "animation_active .3s linear infinite");
-                } else {
-                    $(`span.btn_system.key.key${+on}`).css('animation', "none");
+            if (data_system["C"]) {
+                let allSwitch = document.querySelectorAll("li.switch");
+                for (let i = 0; i < allSwitch.length; i++){
+                    let on = allSwitch[i].getAttribute("on");
+                    if (data_system["C"][+on] == 1) {
+                        $(`.switch.switch${+on}`).css('animation', "animation_color .3s linear infinite");
+                    } else {
+                        $(`.switch.switch${+on}`).css('animation', "none");
+                    }
+                }
+                let allDot_switch = document.querySelectorAll(".btn_system.switch");
+                for (let i = 0; i < allDot_switch.length; i++){
+                    let on = allDot_switch[i].getAttribute("on");
+                    if (data_system["C"][on] == 1) {
+                        $(`.btn_system.switch.switch${+on}`).css('animation', "animation_active .3s linear infinite");
+                    } else {
+                        $(`.btn_system.switch.switch${+on}`).css('animation', "none");
+                    }
                 }
             }
-            
-        }
-        if (data_system["C"]) {
-             let allSwitch = document.querySelectorAll("li.switch");
-             for (let i = 0; i < allSwitch.length; i++){
-                let on = allSwitch[i].getAttribute("on");
-                if (data_system["C"][+on] == 1) {
-                      $(`.switch.switch${+on}`).css('animation', "animation_color .3s linear infinite");
-                } else {
-                      $(`.switch.switch${+on}`).css('animation', "none");
-                }
-            }
-             let allDot_switch = document.querySelectorAll(".btn_system.switch");
-            for (let i = 0; i < allDot_switch.length; i++){
-                let on = allDot_switch[i].getAttribute("on");
-                if (data_system["C"][on] == 1) {
-                     $(`.btn_system.switch.switch${+on}`).css('animation', "animation_active .3s linear infinite");
-                } else {
-                    $(`.btn_system.switch.switch${+on}`).css('animation', "none");
-                }
-            }
-        }
     }
     });
     socket.on('RECIVE_READER_SYSTEM', (data) => {
