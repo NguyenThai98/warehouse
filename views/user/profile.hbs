@@ -53,26 +53,7 @@
 
 
 <script>
-    let data = JSON.parse(localStorage.getItem('data_device'));
-    if (data) {
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].status == 'không khóa') {
-                $('.addData_device').append(` <tr>
-                    <td>${data[i].name_device}</td>
-                    <td>${data[i].pos_x} / ${data[i].pos_y}</td>
-                    <td class="borrow_device">Mượn</td>
-                </tr>`);
-            } else {
-                $('.addData_device').append(` <tr>
-                    <td>${data[i].name_device}</td>
-                    <td>${data[i].pos_x} / ${data[i].pos_y}</td>
-                    <td class="taken_device">Trả</td>
-                </tr>`);
-            }
-        }
-        localStorage.setItem('data_device', []);
-    }
-
+    let checkChangeimg = false;
     $('#image_device').change(function () {
         var file = $(this)[0].files[0];
         var patterImage = new RegExp("image/*");
@@ -82,41 +63,43 @@
             var fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.onload = function (e) {
+                checkChangeimg = true;
                 $("#img-avatar").attr("src", e.target.result);
             }
         }
     })
     function handleUpdateProfile() {
-        let password = document.getElementById('password').value;
+        let passwordd = document.getElementById('password').value;
         let image_avatar = document.querySelector("#image_device").files[0];
         let cf_password = document.getElementById('cf_password').value;
-        var img = '';
-        let pw = '';
-        if (password.length < 6) {
-            $(".showErrr").html("Mật Khẩu Phải Lớn hơn 6 Kí Tự");
-            $(".showErrr").css("display", "block");
-            setTimeout(() => {
-                $(".showErrr").css("display", "none");
-                let pathname = window.location.pathname;
-                window.location.replace(pathname);
-            }, 2000);
-        }
-        if (password === cf_password) {
-            pw = cf_password;
-        } else {
-            $(".showErrr").html("Mật Khẩu Xác Thực Sai!");
-            $(".showErrr").css("display", "block");
-            setTimeout(() => {
-                $(".showErrr").css("display", "none");
-                let pathname = window.location.pathname;
-                window.location.replace(pathname);
-            }, 2000);
-        }
         var form_data = new FormData();
-        form_data.append("password", pw);
-        if (image_avatar != null) {
-            img = image_avatar;
-            form_data.append("avatar", img);
+        if($("#password").val().trim() != ""){
+            if (passwordd.length < 6) {
+                $(".showErrr").html("Mật Khẩu Phải Lớn hơn 6 Kí Tự");
+                $(".showErrr").css("display", "block");
+                $("#cf_password").val("");
+                $("#password").val("");
+                setTimeout(() => {
+                    $(".showErrr").css("display", "none");
+                }, 2000);
+                return;
+            }
+             if (passwordd == cf_password) {
+                pw = cf_password;
+                form_data.append("password", pw);
+            } else {
+                $(".showErrr").html("Mật Khẩu Xác Thực thất bại!");
+                $(".showErrr").css("display", "block");
+                $("#cf_password").val("");
+                setTimeout(() => {
+                    $(".showErrr").css("display", "none");
+                }, 2000);
+                return;
+            }
+        }
+        if(checkChangeimg == true){
+                form_data.append("avatar", image_avatar);
+                checkChangeimg = false;
         }
         $.ajax({
             type: "POST",
@@ -126,7 +109,7 @@
             processData: false,
             headers: { "X-CSRF-Token": $("meta[name='csrf-token']").attr("content") },
             success: function (data) {
-                $(".showErrr").html("Cập nhật thành công!");
+                $(".showErrr").html("Cập nhật thành công.");
                 $(".showErrr").css("display", "block");
                 setTimeout(() => {
                     $(".showErrr").css("display", "none");
@@ -134,7 +117,11 @@
                 }, 2000);
             },
             error: function (data) {
-
+                $(".showErrr").html("Cập nhật thất bại.");
+                $(".showErrr").css("display", "block");
+                 setTimeout(() => {
+                    $(".showErrr").css("display", "none");
+                }, 2000);
             }
         });
     }

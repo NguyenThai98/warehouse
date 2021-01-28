@@ -53,12 +53,11 @@ const deviceCtl = {
     },
     getBorrow: async (req, res) => {
         try {
-            //let listUserAuthBorrow = await accountRoleModle.listUserAuthBorrow();
             const { rfid, note_report, date_rent } = req.body;
             const {id_account} = res.locals.lcAuthUser;
-            if (!date_rent) return res.status(400).json({ msgErr: "Chưa Nhập Ngày Mượn" });
+
             const device = await deviceModel.findDeviceRFID(rfid);
-            const shelf = await deviceModel.selectSlot(device.id_device);
+            const shelf = await deviceModel.findDevice(device.id_device);
             const entityReport = {
                 total_slot: shelf.total_slot > 0 ? shelf.total_slot - 1 : 0,
                 total_slotEmpty: shelf.total_slotEmpty + 1
@@ -88,7 +87,7 @@ const deviceCtl = {
             const { id_account } = res.locals.lcAuthUser;
             if (!date_rent) return res.status(400).json({ msgErr: "Chưa Nhập Ngày Lấy" });
             const device = await deviceModel.findDeviceRFID(rfid);
-            const shelf = await deviceModel.selectSlot(device.id_device);
+            const shelf = await deviceModel.findDevice(device.id_device);
             const entityReport = {
                 total_slot: shelf.total_slot > 0 ? shelf.total_slot - 1 : 0,
                 total_slotEmpty: shelf.total_slotEmpty + 1
@@ -122,7 +121,7 @@ const deviceCtl = {
             const { id_account } = res.locals.lcAuthUser;
             if (!date_rent) return res.status(400).json({ msgErr: "Chưa Nhập Ngày Đăng Ký" });
             const device = await deviceModel.findDeviceRFID(rfid);
-            const shelf = await deviceModel.selectSlot(device.id_device);
+            const shelf = await deviceModel.findDevice(device.id_device);
             const entityReport = {
                 total_slot: shelf.total_slot > 0 ? shelf.total_slot - 1 : 0,
                 total_slotEmpty: shelf.total_slotEmpty + 1
@@ -195,7 +194,7 @@ const deviceCtl = {
         if (+device.role > role_account) {
             return res.status(400).json({ msgErr: "Bạn Không đủ quyền mượn." });
         }
-        const shelf = await deviceModel.selectSlot(device.id_device);
+        const shelf = await deviceModel.findDevice(device.id_device);
         const entityReport = {
             total_slot: shelf.total_slot > 0 ? shelf.total_slot - 1 : 0,
             blank: shelf.blank + 1
@@ -297,7 +296,7 @@ const deviceCtl = {
             const { rfid, date_back } = req.body;
             const { id_account } = res.locals.lcAuthUser;
             const device = await deviceModel.findDeviceRFID(rfid);
-            const shelf = await deviceModel.selectSlot(device.id_device);
+            const shelf = await deviceModel.findDevice(device.id_device);
             const entityReport = {
                 total_slot: shelf.total_slot > 0 ? shelf.total_slot + 1 : 0,
                 total_slotEmpty: shelf.total_slotEmpty - 1

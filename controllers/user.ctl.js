@@ -56,27 +56,36 @@ const userCtl = {
     },
     updateProfile: async function(req,res){
         try {
-            const{password} = req.body;
-            const {id_account} = res.locals.lcAuthUser;
-            const pwHash = await bcryptjs.hash(password, 12);
-            if(req.file){
-                const{filename} = req.file;
-                var entity={
+            let {id_account} = res.locals.lcAuthUser;
+            let condition ={
+                id_account: +id_account
+            }
+            let entity = {};
+            if(req.file == undefined && req.body){
+                let{password} = req.body;
+                let pwHash = await bcryptjs.hash(password, 12);
+                entity={
+                    password: pwHash
+                }
+               
+            }else if(req.file != undefined && req.body){
+                let {filename} = req.file;
+                entity={
+                    avatar: filename
+                }
+            }else{
+                let {filename} = req.file;
+                let {password} = req.body;
+                let pwHash = await bcryptjs.hash(password, 12);
+                entity={
                     password: pwHash,
                     avatar: filename
-             }
-            }else{
-                var entity={
-                    password: pwHash
-             }
+                }
             }
-            const condition ={
-                id_account: +id_account
-             }
-             const updateProfile = await userModel.modifyProfile(entity,condition);
-             return res.json(updateProfile);
+            const updateProfile = await userModel.modifyProfile(entity,condition);
+            res.json({msgSuccess: "Cập nhật thành công."});
         } catch (error) {
-            return res.json({ errorMsg: err.message });
+            res.json({msgErr: "Cập nhật thành bại."});
         }
     },
     loginRFID: async function (req, res) {

@@ -106,6 +106,31 @@ const adminCtl = {
         const {id_device} = req.body
         const {id_account} = req.body
         const updateRejectReport = await reportModel.updateRejectReport(id_device,id_account);
+    },
+    delAccount: async (req, res) =>{
+        let checkDelAccount = false;
+        try {
+            const {id_account} = req.body
+            if(!id_account) return res.status(400).json({ msgErr: "Vui lòng chọn tài khoản."});
+            const allAccountDel = await adminModel.selectAllAccounts(id_account);
+            setTimeout(async () => {
+                    for(let index = 0; index < allAccountDel.length;index++){
+                        if(index == allAccountDel.length -1){
+                            checkDelAccount = true;
+                        }
+                        await adminModel.delAccountRole(allAccountDel[index].id_account_role);
+                    }
+                    if(checkDelAccount == true){
+                        await adminModel.delAccount(id_account);
+                        checkDelAccount = false;
+                    }
+                    return res.json({msgSuccess: "Xóa tài khoản thành công."});
+            },1000);
+          
+        
+        } catch (error) {
+           return res.json({msgErr: "Xóa tài khoản thất bại."});
+        }
     }
 }
 module.exports = adminCtl;

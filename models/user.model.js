@@ -9,8 +9,8 @@ module.exports = {
     addUser: function (entity) {
         db.add(TBL_USERS, entity);
     },
-    allUser: function () {
-        return db.load(`select * from ${TBL_USERS}`);
+    allUser: function (id_account) {
+        return db.load(`select * from ${TBL_USERS} WHERE isLive = 1 and id_account != ${id_account}`);
     },
     selectIdUser: async function () {
         const id_account = await db.load(`select * from account  ORDER BY id_account DESC`);

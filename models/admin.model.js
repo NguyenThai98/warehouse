@@ -12,5 +12,20 @@ module.exports = {
         join account a on r.id_account = a.id_account
         join device d on d.id_device = r.id_device
         where r.id_report_status = 3 and r.isApprove = 0 and d.isLive=2`);
+    },
+    delAccountRole: function (id_account_role){
+        const entity = {
+            id_account_role: id_account_role
+        }
+        return db.del('account_role',entity);
+    },
+    delAccount: async function (id_account){
+        const entity = {
+            id_account: id_account
+        }
+        return db.del('account',entity);
+    },
+    selectAllAccounts: function (id_account){
+        return db.load(`select * from account_role WHERE id_account = ${id_account} `);
     }
 }

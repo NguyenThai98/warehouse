@@ -31,7 +31,6 @@ app.get('/', auth, function (req, res) {
     res.render('home/home');
 });
 io.on('connection', (socket) => {
-    console.log(socket.id);
     app.set('socket', socket);
     //scanRFID
     socket.on('SCAN_RFID_REGISTER_DEVICE', (data) => {

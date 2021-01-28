@@ -21,10 +21,12 @@
                             <td>{{user_name}}</td>
                             <td> <input type="password" class="form-control" value="{{rfid}}" disabled="disabled"></td>
                             <td>
-                                <button type="button" data-toggle="modal" data-target="#modelEdit" class="btn btn-dark"
+                                <button type="button" data-toggle="modal" data-target="#modelEdit" class="btn btn-warning"
                                     onclick="EditUser('{{rfid}}')">Chỉnh sửa</button>
                                 <button type="button" class="btn btn-info" onclick="authUser('{{id_account}}')"
                                     data-toggle="modal" data-target="#modelAuth">Phân quyền</button>
+                                <button type="button"  class="btn btn-danger"
+                                    onclick="DelUser('{{id_account}}')">Xóa tài khoản</button>
                             </td>
                         </tr>
                         {{/each}}
@@ -232,6 +234,31 @@
 {{#section 'js'}}
 <script>
     let id_acc = -1;
+    function DelUser(id_account){
+        let flag = confirm("Bạn chắc chắn xóa tài khoản.");
+        if(flag == true){
+            let data = {
+                id_account: id_account
+            }
+            fetch("/admin/delAccount", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msgErr == undefined){
+                        alert(data.msgSuccess);
+                        window.location.reload();
+                    }else{
+                        alert(data.msgErr);
+                    }
+                })
+        }
+        
+    }
     function fChangeAuth() {
         let showErr = document.querySelector('.showErrr');
         let authUsers = [];

@@ -63,12 +63,11 @@
     socket.on('CHECK_OPEN_SHELFF', (data) => {
         if(data == "true") {
             fBorrow();
-        }else{
+        }else{fBorrow
             alert('Mượn dụng cụ thất bại.');
         }
     });
     socket.on('LISTEN_OPEN_SHELF', (data) => {
-        console.log(data);
          if(data == "1"){
             alert('Tủ đã mở');
         }
@@ -88,7 +87,6 @@
         let name_device = document.querySelector('span.name_device').textContent;
         let full_name_header = document.querySelector('.full_name_header').textContent;
         let dateToday = new Date().getTime();
-
         let data = {
             rfid,
             date_rent: dateToday,
