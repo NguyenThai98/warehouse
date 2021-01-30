@@ -227,6 +227,9 @@ Layout
             })
     }
     function FormRegisterDevice() {
+        let idtu = $("#name_shelf").val();
+        let iddm = $("#name_category").val();
+        let idproduct = $("#name_product").val();
         let optionVal = $('#name_product').find(":selected").val();
         let image_device = document.querySelector("#image_device").files[0];
         let date = new Date();
@@ -239,6 +242,18 @@ Layout
         let form_data = new FormData();
         if (!image_device || !$("#name_device").val() || !pos_x || !pos_y || !$("#rfid").val() || !date_inn || !optionVal) {
             alert('Vui lòng điền đầy đủ thông tin.');
+            return;
+        }
+        if(idtu == "-1"){
+            alert('Vui lòng chọn tủ');
+            return;
+        }
+        if(iddm == "-1"){
+            alert('Vui lòng danh mục');
+            return;
+        }
+         if(idproduct == "-1"){
+            alert('Vui lòng loại dụng cụ');
             return;
         }
         form_data.append("image", image_device);
@@ -263,7 +278,7 @@ Layout
                         $(".showErr_01").css("display", "none");
                          
                         $("#editRegisterAccount").click();
-                        socket.emit('REGISTERR_DEVICE', "Có dụng cụ thêm mới.")
+                        socket.emit('REGISTERR_DEVICE', `có thêm dụng cụ mới trong tủ ${idtu}`);
                     }, 3000);
                 }
             },
@@ -323,7 +338,6 @@ Layout
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 for (let j = 1; j <= 12; j++) {
                     for (let i = 1; i <= 19; i++) {
                         cabinet.append("<div class ='slot' onclick='getPosition(" + j + "," + i + ")' data-toggle='modal' data-target='#register_Device' id = '" + j + "-" + i + "' style = 'grid-row : " + j + "; grid-column : " + i + "'></div>");

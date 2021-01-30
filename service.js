@@ -63,9 +63,21 @@ io.on('connection', (socket) => {
     socket.on('REGISTER_ACCOUNT', (data) => {
         socket.emit('SERVER_SEND_REGISTER_ACCOUNT', data);
     })
-    socket.on('REGISTERR_DEVICE', (data) => {
+    socket.on('REGISTERR_DEVICE', (data) => {        
+        let stringData = data.split(" ");
+        let idtu = stringData[stringData.length - 1];
         socket.emit('SERVER_SEND_REGISTER_DEVICE', data);
+       
     })
+    // dang ki dung cu moi
+    socket.on('SERVER_SEND_REGISTER_DEVICE_FOR_PLC', (data) => {
+        socket.broadcast.emit('SERVER_SEND_REGISTER_DEVICE_FOR_PLC', data);
+    })
+    socket.on('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC',(data) => {
+        socket.broadcast.emit('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC', data);
+    });
+   
+       // dang ki dung cu moi xxx
     socket.on('SCAN_PLC_SYSTEM', (data) => {
         socket.join('PLC');
         data = data.toString();

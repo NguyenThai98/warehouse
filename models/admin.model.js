@@ -4,7 +4,7 @@ module.exports = {
         return db.load(`select * from account where isLive = 0`);
     },
     Requests_Register_device: () => {
-        return db.load(`select * from device where isLive = 0 and status = 0`);
+        return db.load(`select * from device d JOIN product p on d.id_product = p.id_product JOIN category c on p.id_category = c.id_category JOIN shelf s on c.id_shelf = s.id_shelf where d.isLive = 0 and d.status = 0`);
     },
     Requests_Order_device: () => {
         return db.load(`select a.full_name,d.name_device,d.rfid,r.date_rent,r.id_device,r.id_account

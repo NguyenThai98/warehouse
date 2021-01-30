@@ -16,6 +16,7 @@
                         <tr>
                             <th scope="col">Tên dụng cụ</th>
                             <th scope="col">RFID</th>
+                            <th scope="col">Ngăn Tủ</th>
                             <th scope="col">Xử lý</th>
                         </tr>
                     </thead>
@@ -24,9 +25,10 @@
                         <tr>
                             <td>{{name_device}}</td>
                             <td>{{rfid}}</td>
+                            <td>{{name_shelf}}</td>
                             <td>
                                 <button type="button" class="btn btn-outline-info"
-                                    onclick="accept('{{rfid}}','device')">Đồng
+                                    onclick="socketAccept('{{rfid}}','device','{{name_shelf}}')">Đồng
                                     ý</button>
                                 <button type="button" class="btn btn-outline-warning"
                                     onclick="reject('{{rfid}}','device')">Từ
@@ -144,9 +146,23 @@
 {{/section}}
 {{#section 'js'}}
 <script>
-
-
-
+    let rfidd = null;
+    let tablee = null;
+    socket.on('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC', (data) =>{
+        accept(rfidd,tablee);
+        rfidd = null;
+        tablee = null;
+    });
+    function socketAccept(rfid,table,name_shelf){
+        rfidd = rfid;
+        tablee = table;
+        let name_shelf = name_shelf.split(" ")[2];
+         let data = {
+            id_shelf: idtu,
+            rfid
+        };
+        socket.emit('SERVER_SEND_REGISTER_DEVICE_FOR_PLC',data)
+    }
     function accept(rfid, table) {
         let data = {
             rfid: rfid,

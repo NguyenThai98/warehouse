@@ -17,7 +17,6 @@ socket.on('SERVER_SEND_REGISTER_ACCOUNT', (data) => {
    
 });
 socket.on('SERVER_SEND_REGISTER_DEVICE', (data) => {
-    console.log(data);
     let notification_accept = $(".notification_accept");
     notification_accept.append(`<span> ${data} <a onclick="redirectAccept()" href="javascript:void(0)">Duyệt</a> </span>`);
     notification_accept.css('display', 'block');

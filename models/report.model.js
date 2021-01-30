@@ -455,7 +455,7 @@ module.exports = {
                 WHERE total.name_product = total.name_product`);
             return allpage[0].totalPage;
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
 
     },

@@ -112,7 +112,6 @@
         socket.emit("REGISTER_DEVICE", data);
     }
     socket.on('LISTEN_OPEN_SHELF_REGISTER', (data) => {
-         console.log(data);
         if(data == "1"){
             alert('Tủ đã mở');
         }
@@ -121,7 +120,7 @@
     socket.on('CHECK_OPEN_SHELF_REGISTER', (data) => {
 
         if(data == "true") {
-            handleTakenDevice();
+            handleTakenDevice(rfid,fullName,nameDevice);
         }else{
             alert('Lấy dụng cụ thất bại.');
         }
@@ -133,7 +132,6 @@
             date_rent: dateToday,
             note_report: "Lay dung cu"
         }
-        console.log(data)
         fetch("/device/GetDevice", {
             method: 'POST',
             headers: {
@@ -144,7 +142,10 @@
             .then(data => {
                 if (data.msgErr == undefined) {
                     socket.emit('CLIENT_TAKEN_DEVICE', ({ full_name: `${full_name}`, name_device: `${name_device}` }));
-                    window.location.reload(false)
+                    window.location.reload();
+                    rfid = null;
+                    fullName = null;
+                    nameDevice = null;
                 }
             }).catch(error => console.log(error.message))
     }

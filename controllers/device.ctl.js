@@ -4,7 +4,6 @@ const reportModel = require('../models/report.model');
 const fs = require('fs');
 const userModel = require('../models/user.model');
 const accountRoleModle = require('../models/account_role.model');
-const { log } = require('console');
 const deviceCtl = {
     getAllDevice: async (req, res) => {
         const allDevices = await deviceModel.all();

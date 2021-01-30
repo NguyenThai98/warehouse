@@ -203,7 +203,6 @@
             body: JSON.stringify(data),
         }).then(response => response.json())
             .then(data => {
-                console.log(data);
                 rfid.value = data.rfid;
                 let modal = document.querySelector('.modal.fade');
                 name_device.innerHTML = data.name_device;
