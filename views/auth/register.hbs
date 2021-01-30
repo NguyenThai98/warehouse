@@ -1,60 +1,71 @@
 <div class="titleLogin">
     <h3>Register</h3>
 </div>
-<div class="formRegister">
-    <form id="formRegister">
-        <div class="showErr"></div>
-        <div class="I_gmail">
-            <label for="full_name">Full Name</label> <br />
-            <input type="text" name="full_name" id="full_name" placeholder="Enter your full name"></input>
-        </div>
-        <div class="I_gmail">
-            <label for="username">Username</label> <br />
-            <input type="text" id="user_name" name="user_name" placeholder="Enter your username"></input>
-        </div>
-        {{#if rfid}}
-        <div class="I_gmail">
-            <label for="rfid">Rfid</label> <br />
-            <input type="text" id="rfid" name="rfid" value="{{rfid}}" disabled="disabled"
-                placeholder="Enter your rfid"></input>
-        </div>
-        {{else}}
-        <div class="I_gmail">
-            <label for="rfid">Rfid</label> <br />
-            <input type="text" id="rfid" name="rfid" placeholder="Enter your rfid"></input>
-        </div>
-        {{/if}}
-
-        <div class="I_password">
-            <label for="password">Password</label><br />
-            <input type="password" id="password" name="password" placeholder="Enter your password"></input>
-        </div>
-        <div class="I_password">
-            <label for="cf_password">Confirm Password</label><br />
-            <input type="password" id="cf_password" name="cf_password" placeholder="Confirm password"></input>
-        </div>
-        <div class="bottom_form">
-            <a href="javascript:void(0)" onclick="submitFormRegister()"> ĐĂNG KÝ </a>
-        </div>
-    </form>
-</div>
+ <div class="formRegister">
+                    <form id="formRegister">
+                        <div class="showErr_01"></div>
+                        <div class="I_gmail">
+                            <label for="full_name">Họ và tên</label> <br />
+                            <input type="text" name="full_name" id="full_name" placeholder="Nhập họ và tên"></input>
+                        </div>
+                        <div class="I_gmail">
+                            <label for="username">Tên tài khoản</label> <br />
+                            <input type="text" id="user_name" name="user_name" placeholder="Nhập tên tài khoản"></input>
+                        </div>
+                        <div class="I_gmail">
+                            <label for="roomUser">Phòng Ban</label> <br />
+                            <input type="text" id="roomUser" name="roomUser" placeholder="Nhập phòng ban"></input>
+                        </div>
+                        <div class="I_password">
+                            <label for="rfid">Rfid</label> <br />
+                            <input type="password" disabled="disabled" id="rfid" name="rfid" placeholder="Scan mã rfid"></input>
+                            <div id="scan_rfid" onclick="scan_rfid()"
+                                style="text-align: center;background: var(--mau4);font-weight: bold;cursor: pointer;color: var(--mau1);">
+                                Quét mã rfid</div>
+                        </div>
+                         
+                        <div class="I_password">
+                            <label for="password">Mật khẩu</label><br />
+                            <input type="password" id="password" name="password" placeholder="Nhập mật khẩu"></input>
+                        </div>
+                        <div class="I_password">
+                            <label for="cf_password">Xác nhận mật khẩu</label><br />
+                            <input type="password" id="cf_password" name="cf_password"
+                                placeholder="Xác nhận mật khẩu"></input>
+                        </div>
+                        <div class="bottom_form">
+                            <a href="javascript:void(0)" onclick="submitFormRegister()"> ĐĂNG KÝ </a>
+                        </div>
+                    </form>
+                </div>
 
 {{#section 'js'}}
 <script type="text/javascript">
-    let showErr = document.querySelector('.showErr');
-    function submitFormRegister() {
+    socket.on('CLIENT_REVICE_RFID', (data) => {
+            $("#rfid").val(data);
+            $("#scan_rfid").html("Quét mã rfid hoàn tất.");
+            socket.emit('SCAN_RFID_REGISTER_DEVICE', "OK");
+        })
+     function scan_rfid() {
+        socket.emit("SCAN_RFID_REGISTER_DEVICE", "SCAN_RFID");
+        $("#scan_rfid").html("Đang quét mã rfid...");
+    }
+     function submitFormRegister() {
+        let showErr = document.querySelector('.showErr_01');
         let full_name = document.querySelector('#full_name').value;
         let user_name = document.querySelector('#user_name').value;
         let rfid = document.querySelector('#rfid').value;
         let cf_password = document.querySelector('#cf_password').value;
         let password = document.querySelector('#password').value;
+        let roomUser = document.querySelector('#roomUser').value;
         let data = {
             full_name: full_name,
             user_name: user_name,
             rfid: rfid,
-            password: password
+            password: password,
+            roomUser
         }
-        if (validate(full_name, user_name, rfid, password, cf_password)) {
+        if (validate(full_name, user_name, rfid, password, cf_password, roomUser)) {
             fetch("/user/register", {
                 method: 'POST',
                 headers: {
@@ -72,7 +83,9 @@
                         showErr.style.display = "block";
                         setTimeout(() => {
                             showErr.style.display = "none";
-                            window.location.replace('/user/login');
+                            let editRegisterAccount = document.querySelector('#editRegisterAccount');
+                            editRegisterAccount.click();
+                            window.location.reload();
                         }, 2000)
                     } else {
                         showErr.innerHTML = data.msgErr;
@@ -80,15 +93,16 @@
                         setTimeout(() => {
                             showErr.style.display = "none";
                         }, 2000)
-                        user_name.value = "";
-                        password.value = "";
+                        user_name = "";
+                        password = "";
                     }
                 })
 
         }
+
     }
 
-    function validate(full_name, user_name, rf_id, password, cf_password) {
+    function validate(full_name, user_name, rf_id, password, cf_password, roomUser) {
         if (full_name == "") {
             alert("Please enter fullname.");
             return false;
@@ -103,6 +117,10 @@
         }
         if (password == "") {
             alert("Please enter password.");
+            return false;
+        }
+        if (roomUser == "") {
+            alert("Please enter roomUser.");
             return false;
         }
         if (password.length < 6) {

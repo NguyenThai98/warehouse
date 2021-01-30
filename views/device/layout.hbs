@@ -75,7 +75,7 @@
                         </div>
                         <div class="I_password">
                             <label for="rfid">RFID</label><br />
-                            <input type="text" id="rfid" name="rfid" placeholder="Mã RFID"></input>
+                            <input type="text" disabled="disabled" id="rfid" name="rfid" placeholder="Mã RFID"></input>
                             <div id="scan_rfid" onclick="scan_rfid()"
                                 style="text-align: center;background: var(--mau4);font-weight: bold;cursor: pointer;color: var(--mau1);">
                                 Quét mã rfid</div>
@@ -333,7 +333,6 @@ Layout
                 for (let i = 0; i < aSlot.length; i++) {
                     if (data.includes(aSlot[i].id)) {
                         aSlot[i].style.backgroundColor = '#d0f111';
-                        // aSlot[i].style.pointerEvents = "none";
                     }
                 }
             })

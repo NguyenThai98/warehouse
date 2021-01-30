@@ -123,9 +123,7 @@ const reportCtl = {
                 let y = date.getFullYear();
                 let m = date.getMonth();
                 let d = date.getDate();
-                let hh = date.getHours();
-                let pp = date.getMinutes();
-                let time = d + '/' + m + '/' + y + "  " + hh + ":" + pp;
+                let time = d + '/' + m + '/' + y;
                 historyBorrow[index].date_back = time;
             }
             if (historyBorrow[index].date_rent != null) {
@@ -133,9 +131,7 @@ const reportCtl = {
                 let y = date.getFullYear();
                 let m = date.getMonth();
                 let d = date.getDate();
-                let hh = date.getHours();
-                let pp = date.getMinutes();
-                let time = d + '/' + (m+1) + '/' + y + "  " + hh + ":" + pp;
+                let time = d + '/' + (m+1) + '/' + y;
                 historyBorrow[index].date_rent = time;
             }
 
@@ -186,9 +182,7 @@ const reportCtl = {
                 let y = date.getFullYear();
                 let m = date.getMonth();
                 let d = date.getDate();
-                let hh = date.getHours();
-                let pp = date.getMinutes();
-                let time = d + '/' + (m+1) + '/' + y + "  " + hh + ":" + pp;
+                let time = d + '/' + (m+1) + '/' + y;
                 historyReturn[index].date_back = time;
             }
             if (historyReturn[index].date_rent != null) {
@@ -196,9 +190,7 @@ const reportCtl = {
                 let y = date.getFullYear();
                 let m = date.getMonth();
                 let d = date.getDate();
-                let hh = date.getHours();
-                let pp = date.getMinutes();
-                let time = d + '/' + (m+1) + '/' + y + "  " + hh + ":" + pp;
+                let time = d + '/' + (m+1) + '/' + y;
                 historyReturn[index].date_rent = time;
             }
         }
@@ -247,9 +239,7 @@ const reportCtl = {
                 let y = date.getFullYear();
                 let m = date.getMonth();
                 let d = date.getDate();
-                let hh = date.getHours();
-                let pp = date.getMinutes();
-                let time = d + '/' + (m+1) + '/' + y + "  " + hh + ":" + pp;
+                let time = d + '/' + (m+1) + '/' + y;
                 historyGet[index].date_rent = time;
             }
         }

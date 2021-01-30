@@ -57,15 +57,21 @@
                             </ul>
                         </li>
                         {{/if}}
-                        {{#if PHAN_QUYEN_CAP_NHAT_MK}}
-                        <li class="nav"><a href="/admin/auth">QUẢN LÝ USER</a>
+                        {{#or TAO_TAI_KHOAN PHAN_QUYEN_CAP_NHAT_MK}}
+                        <li class="nav"><a href="/admin/auth">Quản lý tài
+                                khoản</a>
                             <ul>
+                                {{#if TAO_TAI_KHOAN}}
+                                <li><a href="/user/register">Tạo tài khoản</a></li>
+                                {{/if}}
+                                {{#if PHAN_QUYEN_CAP_NHAT_MK}}
                                 <li><a href="/admin/auth">Phân quyền</a></li>
+                                {{/if}}
                             </ul>
                         </li>
-                        {{/if}}
+                        {{/or}}
                         {{#or DUYET_DUNG_CU XUAT_FILE_KIEM_KE}}
-                        <li class="nav"><a href="#">BÁO CÁO</a>
+                        <li class="nav"><a href="/report/historyBorrow">BÁO CÁO</a>
                             <ul>
                                 <li><a href="/report/historyBorrow">Lịch Sử</a></li>
                                 <li><a href="/device/checkShelf">Kiểm kê</a></li>
@@ -101,7 +107,7 @@
                                              <img src="/public/img/{{lcAuthUser.avatar}}" width="25px" height="25px" alt="avatar">
                                          {{/if}}
                                       
-                                        <span><a href="/user/info" class="full_name_header">{{lcAuthUser.full_name}}</a></span>
+                                        <span><a href="/user/info" class="full_name_header">{{lcAuthUser.user_name}}</a></span>
                                     </div>
                                     <div class="login">
                                         <a href="/user/logout">Đăng Xuất</a>

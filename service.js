@@ -61,10 +61,10 @@ io.on('connection', (socket) => {
         io.sockets.emit('SERVER_SEND_AUTH_TAKEN', `Tài khoản ${data.full_name} vừa lấy ${data.name_device}`);
     });
     socket.on('REGISTER_ACCOUNT', (data) => {
-        socket.broadcast.emit('SERVER_SEND_REGISTER_ACCOUNT', data);
+        socket.emit('SERVER_SEND_REGISTER_ACCOUNT', data);
     })
     socket.on('REGISTERR_DEVICE', (data) => {
-        socket.broadcast.emit('SERVER_SEND_REGISTER_DEVICE', data);
+        socket.emit('SERVER_SEND_REGISTER_DEVICE', data);
     })
     socket.on('SCAN_PLC_SYSTEM', (data) => {
         socket.join('PLC');

@@ -26,138 +26,138 @@ module.exports = {
     },
     allPageBorrow: async function (id_account) {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-		on c.id_shelf = s.id_shelf
-        WHERE a.id_account = ${id_account} and rs.id_report_status = 1
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where a.id_account = ${id_account} and rs.id_report_status = 1 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageReturn: async function (id_account) {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-		on c.id_shelf = s.id_shelf
-        WHERE a.id_account = ${id_account} and rs.id_report_status = 2
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where a.id_account = ${id_account} and rs.id_report_status = 2 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageGet: async function (id_account) {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-		on c.id_shelf = s.id_shelf
-        WHERE a.id_account = ${id_account} and rs.id_report_status = 4
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where a.id_account = ${id_account} and rs.id_report_status = 4 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageOrder: async function (id_account) {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-		on c.id_shelf = s.id_shelf
-        WHERE a.id_account = ${id_account} and rs.id_report_status = 3
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where a.id_account = ${id_account} and rs.id_report_status = 3 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageBorrowAdmin: async function () {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-        on c.id_shelf = s.id_shelf
-        where rs.id_report_status =1
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where rs.id_report_status = 1 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageReturnAdmin: async function () {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
+            `SELECT COUNT(*) as totalPage FROM
+        (select d.name_device from report r 
         JOIN account a on r.id_account = a.id_account 
         JOIN report_status rs on r.id_report_status = rs.id_report_status
         JOIN device d on r.id_device = d.id_device
         join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
+        on d.id_product = p.id_product
+        join category c
+        on p.id_category=c.id_category
+        join shelf s
         on c.id_shelf = s.id_shelf
-        where rs.id_report_status = 2
-        order by r.id_report`);
+        where rs.id_report_status = 2 
+        order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageGetAdmin: async function () {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-        on c.id_shelf = s.id_shelf
-        where rs.id_report_status = 4
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where rs.id_report_status = 4 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     allPageOrderAdmin: async function () {
         const allpage = await db.load(
-            `SELECT COUNT(*) as totalPage
-        from report r 
-        JOIN account a on r.id_account = a.id_account 
-        JOIN report_status rs on r.id_report_status = rs.id_report_status
-        JOIN device d on r.id_device = d.id_device
-        join product p 
-		on d.id_product = p.id_product
-		join category c
-		on p.id_category=c.id_category
-		join shelf s
-        on c.id_shelf = s.id_shelf
-        where rs.id_report_status = 3
-        order by r.id_report`);
+            `SELECT COUNT(*) as totalPage FROM
+            (select d.name_device from report r 
+            JOIN account a on r.id_account = a.id_account 
+            JOIN report_status rs on r.id_report_status = rs.id_report_status
+            JOIN device d on r.id_device = d.id_device
+            join product p 
+            on d.id_product = p.id_product
+            join category c
+            on p.id_category=c.id_category
+            join shelf s
+            on c.id_shelf = s.id_shelf
+            where rs.id_report_status = 3 
+            order by r.id_report limit 100) as t`);
         return allpage[0].totalPage;
     },
     historyBorrowPage: async function (id_account, limit, offset) {

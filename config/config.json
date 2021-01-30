@@ -1,13 +1,12 @@
 {  
     "mysql": {
-    "host": "localhost",
-    "user": "root",
-    "port": 3306,
-    "password": "",
-    "database": "dbwarehouse",
-    "connectionLimit": 50
-},
-
+        "host": "localhost",
+        "user": "root",
+        "port": 3306,
+        "password": "",
+        "database": "dbwarehouse",
+        "connectionLimit": 50
+    },
     "TOKEN": "asjdlasldjasjd;las;lldk[pkqwpi]iqwe[i=qwq",
     "URL": "http://localhost:9000"
 }

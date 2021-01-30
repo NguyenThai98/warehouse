@@ -52,7 +52,7 @@
         {{/if}}
     </form>
 </div>
-<div class="container">
+{{!-- <div class="container">
     <div class="row">
         <div class="col-12">
             <div class="titleLogin">
@@ -85,7 +85,7 @@
         </div>
 
     </div>
-</div>
+</div> --}}
 <div class="modal fade" id="Register_Account" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -183,11 +183,8 @@
                             showMsg.style.display = "none";
                         }, 2000);
                     } else {
-                        let pathname = window.location.pathname;
 
-                        if (pathname && pathname != '/user/login') {
-                            window.location.replace(pathname);
-                        }
+                        window.location.replace('/');
                     }
 
                 })
