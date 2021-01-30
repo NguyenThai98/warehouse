@@ -112,21 +112,8 @@ const adminCtl = {
         try {
             const {id_account} = req.body
             if(!id_account) return res.status(400).json({ msgErr: "Vui lòng chọn tài khoản."});
-            const allAccountDel = await adminModel.selectAllAccounts(id_account);
-            setTimeout(async () => {
-                    for(let index = 0; index < allAccountDel.length;index++){
-                        if(index == allAccountDel.length -1){
-                            checkDelAccount = true;
-                        }
-                        await adminModel.delAccountRole(allAccountDel[index].id_account_role);
-                    }
-                    if(checkDelAccount == true){
-                        await adminModel.delAccount(id_account);
-                        checkDelAccount = false;
-                    }
-                    return res.json({msgSuccess: "Xóa tài khoản thành công."});
-            },1000);
-          
+            await adminModel.delAccount(id_account, {isLive: -1});
+            return res.json({msgSuccess: "Xóa tài khoản thành công."});
         
         } catch (error) {
            return res.json({msgErr: "Xóa tài khoản thất bại."});
