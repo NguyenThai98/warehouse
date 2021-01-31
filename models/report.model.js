@@ -400,7 +400,7 @@ module.exports = {
         on c.id_shelf = s.id_shelf
         join warehouse w 
         on s.id_wh = w.id_wh
-        where d.status = 0 and isLive = 1`)
+        where d.status = 0 and d.isLive = 1`)
         return deviceremaining;
     },
     pageRemaining: async function () {
