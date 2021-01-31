@@ -106,7 +106,7 @@ module.exports = {
     inventory: (limit, offset)=>{
         return db.load(`SELECT p.name_product, COUNT(d.id_product) AS "So_luong"
         FROM device d
-        RIGHT JOIN product p on d.id_product = p.id_product
+        RIGHT JOIN product p on d.id_product = p.id_product where d.isLive = 1 and d.status = 0
         GROUP BY p.name_product limit ${limit} offset ${offset}`)
     }
 }
