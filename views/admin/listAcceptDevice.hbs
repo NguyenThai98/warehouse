@@ -142,26 +142,26 @@
 </section>
 
 {{#section 'title'}}
-    Duyệt Dụng cụ
+Duyệt Dụng cụ
 {{/section}}
 {{#section 'js'}}
 <script>
     let rfidd = null;
     let tablee = null;
-    socket.on('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC', (data) =>{
-        accept(rfidd,tablee);
+    socket.on('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC', (data) => {
+        accept(rfidd, tablee);
         rfidd = null;
         tablee = null;
     });
-    function socketAccept(rfid,table,name_shelf){
+    function socketAccept(rfid, table, name_shelf) {
         rfidd = rfid;
         tablee = table;
-        let name_shelf = name_shelf.split(" ")[2];
-         let data = {
-            id_shelf: idtu,
+        let name_shelff = name_shelf.split(" ")[2];
+        let data = {
+            id_shelf: name_shelff,
             rfid
         };
-        socket.emit('SERVER_SEND_REGISTER_DEVICE_FOR_PLC',data)
+        socket.emit('SERVER_SEND_REGISTER_DEVICE_FOR_PLC', data);
     }
     function accept(rfid, table) {
         let data = {
@@ -175,15 +175,15 @@
             },
             body: JSON.stringify(data),
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.msgErr == undefined) {
-                    alert(data.msgSuccess);
-                    window.location.reload();
-                } else {
-                    alert(data.msgErr);
-                }
-            })
+        .then(response => response.json())
+        .then(data => {
+            if (data.msgErr == undefined) {
+                alert(data.msgSuccess);
+                window.location.reload();
+            } else {
+                alert(data.msgErr);
+            }
+        })
 
     }
     function acceptOrder(id_device, id_account) {
@@ -198,9 +198,10 @@
             },
             body: JSON.stringify(data),
         })
-            .then(response => response.json()
-            )
-         window.location.reload(false);
+        .then(response => response.json())
+        .then(data => {
+            window.location.reload();
+        })
 
     }
     function reject(rfid, table) {
@@ -225,7 +226,7 @@
                 }
             })
     }
-     function rejectOrderDevice(id_device, id_account) {
+    function rejectOrderDevice(id_device, id_account) {
         let data = {
             id_device: id_device,
             id_account: id_account
@@ -237,9 +238,12 @@
             },
             body: JSON.stringify(data),
         })
-            .then(response => response.json()
-            )
-         window.location.reload();
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            window.location.reload();
+        })
+
     }
 </script>
 {{/section}}

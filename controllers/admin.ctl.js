@@ -101,11 +101,13 @@ const adminCtl = {
         deviceAccepted.forEach(async(device) => {
             await reportModel.updateAutoRejectReport(device.id_device);
         });
+        res.json({msgSuccess: "Đồng ý thành công."});
     },
     rejectOrder: async (req, res) =>{
         const {id_device} = req.body
         const {id_account} = req.body
         const updateRejectReport = await reportModel.updateRejectReport(id_device,id_account);
+        res.json({msgSuccess: "Từ chối thành công."});
     },
     delAccount: async (req, res) =>{
         let checkDelAccount = false;
