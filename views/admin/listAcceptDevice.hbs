@@ -149,9 +149,13 @@ Duyệt Dụng cụ
     let rfidd = null;
     let tablee = null;
     socket.on('CHECK_SERVER_SEND_REGISTER_DEVICE_FOR_PLC', (data) => {
-        accept(rfidd, tablee);
-        rfidd = null;
-        tablee = null;
+        if(data == "true"){
+            accept(rfidd, tablee);
+            rfidd = null;
+            tablee = null;
+        }else{
+            alert("Đăng kí mới  dụng cụ không thành công");
+        }
     });
     function socketAccept(rfid, table, name_shelf) {
         rfidd = rfid;
