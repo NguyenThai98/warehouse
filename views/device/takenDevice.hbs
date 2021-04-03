@@ -340,9 +340,9 @@
 
                         li.classList.add(`subMenu_${i}`);
 
-                        li.setAttribute('id_product', data[i].id_product);
-                        let id_product = li.getAttribute('id_product');
-                        li.setAttribute('onclick', `getChildMenu_1(${id_product},'li.subMenu_${i}','device')`);
+                        li.setAttribute('name_product', data[i].name_product);
+                        let name_product = li.getAttribute('name_product');
+                        li.setAttribute('onclick', `getChildMenu_1('${name_product}','li.subMenu_${i}','device')`);
                         let textLi = document.createTextNode(data[i].name_product);
                         li.appendChild(textLi);
                         ul.appendChild(li);
