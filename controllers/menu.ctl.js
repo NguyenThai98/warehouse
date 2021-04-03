@@ -2,8 +2,8 @@ const menuModel = require('../models/menu.model');
 const categoryModel = require('../models/category.model');
 const menuCtrl = {
     selectChildMenu: async function (req, res) {
-        const { id, table } = req.body;
-        const subMenu = await menuModel.loadMenu(id, table);
+        const { id, table,name_product } = req.body;
+        const subMenu = await menuModel.loadMenu(id,name_product, table);
         res.json(subMenu);
     },
     selectShefl: async function (req, res) {
